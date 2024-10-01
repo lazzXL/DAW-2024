@@ -1,3 +1,5 @@
+package pt.isel
+
 import java.util.UUID
 
 const val MIN_NAME_LENGTH = 4

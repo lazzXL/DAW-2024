@@ -2,3 +2,4 @@ rootProject.name = 'InstantMessaging'
 
 include 'domain'
 include 'repository'
+include 'services'
