@@ -9,7 +9,7 @@ data class Message (
     val content : String,
     val date : LocalDateTime,
     val user : UUID,
-    val channel: UUID
+    val channelID: UUID
 ){
     init {
         require(content.length < MAX_MESSAGE_LENGTH)
