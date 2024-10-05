@@ -8,10 +8,11 @@ const val MAX_DESCRIPTION_LENGTH = 400
 data class Channel (
     val id : UUID,
     val name : String,
-    val participants : Set<UUID>,
-    val admins : Set<UUID>,
+    //val participants : Set<UUID>,
+    //val admins : Set<UUID>,
+    val admin : UUID,
     val description : String,
-    val message: List<Message>,
+    //val message: List<Message>,
     val visibility: Visibility
 ){
     init {
@@ -22,6 +23,3 @@ data class Channel (
     }
 }
 
-enum class Visibility{
-    PUBLIC, PRIVATE
-}
