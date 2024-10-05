@@ -9,6 +9,7 @@ package pt.isel
  */
 interface Transaction {
     val repoChannel: RepositoryChannel
+    val repoUser : RepositoryUser
     //val repoParticipants: RepositoryParticipant
     //val repoSlots: RepositoryTimeSlot
 
