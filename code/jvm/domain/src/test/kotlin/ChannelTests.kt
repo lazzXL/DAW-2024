@@ -14,7 +14,7 @@ class ChannelTest {
         val admin = UUID.randomUUID()
         val name = "Test Channel"
         val description = "This is a test channel"
-        val visibility = Visibility.PUBLIC // Assuming Visibility is an enum with PUBLIC as one of its values
+        val visibility = Visibility.PUBLIC
 
         val channel = Channel(id, name, admin, description, visibility)
 

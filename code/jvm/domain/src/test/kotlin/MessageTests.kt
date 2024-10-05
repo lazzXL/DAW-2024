@@ -24,7 +24,7 @@ class MessageTest {
 
     @Test
     fun `Message initialization with invalid content length`() {
-        val content = "This is a test message".repeat(1000) // Assuming this is more than MAX_MESSAGE_LENGTH
+        val content = "This is a test message".repeat(1000)
         val date = LocalDateTime.now()
         val user = UUID.randomUUID()
         val channelID = UUID.randomUUID()
@@ -33,4 +33,5 @@ class MessageTest {
             Message(content, date, user, channelID)
         }
     }
+
 }
