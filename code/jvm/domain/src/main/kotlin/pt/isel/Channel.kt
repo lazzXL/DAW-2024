@@ -17,12 +17,12 @@ const val MAX_DESCRIPTION_LENGTH = 400
 data class Channel (
     val id : UUID,
     val name : String,
-    //val participants : Set<UUID>,
+    //val participants : Set<Participant>,
     //val admins : Set<UUID>,
-    val admin : UUID,
+    val admin : Participant,
     val description : String,
     //val message: List<Message>,
-    val visibility: Visibility
+    val visibility: Visibility,
 ){
     init {
         require(name.length in MIN_NAME_LENGTH  .. MAX_NAME_LENGTH &&

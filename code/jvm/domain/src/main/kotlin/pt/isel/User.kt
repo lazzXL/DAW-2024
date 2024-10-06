@@ -19,7 +19,7 @@ data class User (
     val name : String,
     val email : Email,
     val password : String,
-    val channels : Set<UUID>
+    //val channels : Set<UUID>
 ){
     init {
         require(name.length in MIN_NAME_LENGTH  .. MAX_NAME_LENGTH &&

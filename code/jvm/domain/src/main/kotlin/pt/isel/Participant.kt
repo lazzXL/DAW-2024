@@ -9,6 +9,8 @@ import java.util.*
  */
 data class Participant(
     val id : UUID,
+    val user: User,
+    val channel: Channel,
     val permission : Permission
 )
 
