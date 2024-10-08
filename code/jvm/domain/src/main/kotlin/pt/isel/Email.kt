@@ -4,7 +4,8 @@ package pt.isel
  * Represents an email.
  * @property email the email string.
  */
-data class Email (val email: String) {
+@JvmInline
+value class Email (val email: String) {
     init {
         require(email.contains("@") &&
                 email.contains(".") &&
