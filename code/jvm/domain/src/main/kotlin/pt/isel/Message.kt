@@ -14,6 +14,7 @@ const val MAX_MESSAGE_LENGTH = 4000
  * @property channelID the channel where the message was sent
  */
 data class Message (
+    val id : UInt,
     val content : String,
     val date : LocalDateTime,
     //val user : User,

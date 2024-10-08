@@ -5,6 +5,7 @@ interface Transaction {
     val repoUser : RepositoryUser
     val repoParticipant: RepositoryParticipant
     val repoInvite : RepositoryInvite
+    val repoMessage : RepositoryMessage
 
 
     fun rollback()
