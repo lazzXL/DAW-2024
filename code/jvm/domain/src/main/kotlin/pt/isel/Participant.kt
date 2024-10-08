@@ -8,7 +8,7 @@ import java.util.*
  * @property permission the permission of the participant
  */
 data class Participant(
-    val id : UUID,
+    val id : UInt,
     val user: User,
     val channel: Channel,
     val permission : Permission

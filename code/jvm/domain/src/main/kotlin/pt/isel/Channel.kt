@@ -15,7 +15,7 @@ const val MAX_DESCRIPTION_LENGTH = 400
  * @property visibility the visibility of the channel
  */
 data class Channel (
-    val id : UUID,
+    val id : UInt,
     val name : String,
     //val participants : Set<Participant>,
     //val admins : Set<UUID>,

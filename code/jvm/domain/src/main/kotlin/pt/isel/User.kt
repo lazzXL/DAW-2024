@@ -15,7 +15,8 @@ const val MAX_NAME_LENGTH = 40
  * @property channels the channels the user is in
  */
 data class User (
-    val id : UUID,
+    val id : UInt,
+    val token : UUID,
     val name : String,
     val email : Email,
     val password : String,
