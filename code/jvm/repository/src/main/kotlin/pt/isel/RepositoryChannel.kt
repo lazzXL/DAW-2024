@@ -9,4 +9,6 @@ interface RepositoryChannel : Repository<Channel> {
     fun findAllByUser(user: User): List<Channel>
     fun getPublicChannels(): List<Channel>
 
+
+
 }

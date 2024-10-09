@@ -3,13 +3,11 @@ package pt.isel
 import java.util.*
 
 sealed class UserError {
-    data object UserNotFound : ChannelError()
+
+    data object UserNotFound : UserError()
     data object EmailNotFound : UserError()
     data object IncorrectPassword : UserError()
     data object EmailAlreadyExists: UserError()
-    /*data object AdminNotFound: ChannelError()
-    data object UserNotFound: ChannelError()
-    data object InvalidInvite: ChannelError()*/
 
 }
 
@@ -21,10 +19,8 @@ class UserServices(
         email : Email,
         password: String
     ) : Either<UserError, UUID> = trxManager.run {
-        //check if there is a user with this email
         if (!repoUser.emailExists(email))
             return@run failure(UserError.EmailNotFound)
-
         val user = repoUser.getUserbyEmail(email)
         //check if passwords correspond
         if (password != user.password)
@@ -50,16 +46,38 @@ class UserServices(
     fun changePassword(
         email : Email,
         password : String,
-        newPassoword : String
-    ) : Either<UserError, User> = trxManager.run{
-        TODO()
+        newPassword : String
+    ) : Either<UserError, User> = trxManager.run {
+        if (!repoUser.emailExists(email)) return@run failure(UserError.EmailNotFound)
+        val user = repoUser.getUserbyEmail(email)
+        val newUser = repoUser.updateUser(user, newPassword = newPassword)
+        success(newUser)
     }
 
-
-
     //change email
-
+    fun changeEmail(
+        email : Email,
+        newEmail : Email
+    ) : Either<UserError, User> = trxManager.run {
+        if (!repoUser.emailExists(email)) return@run failure(UserError.EmailNotFound)
+        val user = repoUser.getUserbyEmail(email)
+        val newUser = repoUser.updateUser(user, newEmail = newEmail)
+        success(newUser)
+    }
     //change username
-
+    fun changeUsername(
+        userId : UInt,
+        newUsername : String
+    ) : Either<UserError, User> = trxManager.run {
+        val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
+        val newUser = repoUser.updateUser(user, newName = newUsername)
+        success(newUser)
+    }
     //get user info
+    fun getUserInfo(
+        userId : UInt
+    ) : Either<UserError, User> = trxManager.run {
+        val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
+        success(user)
+    }
 }

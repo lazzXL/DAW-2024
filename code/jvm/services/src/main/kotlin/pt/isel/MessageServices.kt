@@ -1,10 +1,9 @@
 package pt.isel
 
 import java.time.LocalDateTime
-import java.util.*
 
 sealed class MessageError {
-    data object UserNotFound: MessageError()
+    data object Participant: MessageError()
     data object ChannelNotFound: MessageError()
 
 }
@@ -17,7 +16,7 @@ class MessageServices(
         date: LocalDateTime,
         participant: UInt
     ): Either<MessageError, Message> = trxManager.run {
-        val messageParticipant = repoParticipant.findById(participant) ?: return@run failure(MessageError.UserNotFound)
+        val messageParticipant = repoParticipant.findById(participant) ?: return@run failure(MessageError.Participant)
         success(repoMessage.sendMessage(content, date, messageParticipant))
     }
 
@@ -28,4 +27,5 @@ class MessageServices(
         val channel = repoChannel.findById(channelID) ?: return@run failure(MessageError.ChannelNotFound)
         success(repoMessage.getMessages(channel, numOfMessages))
     }
+
 }

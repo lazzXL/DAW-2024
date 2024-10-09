@@ -20,7 +20,7 @@ class ChannelServices(
     fun createChannel(
         name: String,
         description: String,
-        adminId: UUID,
+        adminId: UInt,
         visibility: Visibility
     ): Either<ChannelError, Channel> = trxManager.run {
         // Check if channel name is unique
@@ -34,7 +34,7 @@ class ChannelServices(
     }
 
     fun getChannel(
-        channelId: UUID
+        channelId: UInt
     ): Either<ChannelError, Channel> = trxManager.run {
         repoChannel
             .findById(channelId)
@@ -43,45 +43,44 @@ class ChannelServices(
     }
 
     fun getJoinedChannels(
-        userID : UUID
+        userID : UInt
     ): Either<ChannelError, List<Channel>> = trxManager.run {
         val user = repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
         success(repoChannel.findAllByUser(user))
     }
-
     fun joinChannelByInvite(
-        userID:UUID,
-        code:UUID
-    ): Either<ChannelError,Channel> = trxManager.run {
+        userID: UInt,
+        code: UUID
+    ): Either<ChannelError, Channel> = trxManager.run {
         val user = repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
         val invite = repoInvite.findByCode(code)
             ?: return@run failure(ChannelError.InvalidInvite)
         val channel = invite.channel
-        success(repoParticipant.joinChannel(channel,user,invite.permission))
+        success(repoParticipant.joinChannel(channel, user, invite.permission))
     }
 
     fun joinPublicChannel(
-        userID:UUID,
-        channelID:UUID
-    ): Either<ChannelError,Channel> = trxManager.run {
+        userID: UInt,
+        channelID: UInt
+    ): Either<ChannelError, Channel> = trxManager.run {
         val user = repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
         val channel = repoChannel.findById(channelID)
             ?: return@run failure(ChannelError.ChannelNotFound)
-        success(repoParticipant.joinChannel(channel,user,defaultPublicPermission))
+        success(repoParticipant.joinChannel(channel, user, defaultPublicPermission))
     }
 
     fun leaveChannel(
-        userID:UUID,
-        channelID: UUID
-    ) : Either<ChannelError,Channel> = trxManager.run {
+        userID: UInt,
+        channelID: UInt
+    ): Either<ChannelError, Channel> = trxManager.run {
         val user = repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
         val channel = repoChannel.findById(channelID)
             ?: return@run failure(ChannelError.ChannelNotFound)
-        success(repoParticipant.leaveChannel(channel,user))
+        success(repoParticipant.leaveChannel(channel, user))
     }
 
     fun getPublicChannels(): Either<ChannelError,List<Channel>> = trxManager.run {
