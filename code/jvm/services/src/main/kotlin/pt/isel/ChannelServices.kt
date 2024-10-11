@@ -26,10 +26,10 @@ class ChannelServices(
         // Check if channel name is unique
         if (repoChannel.findByName(name) != null) return@run failure(ChannelError.ChannelNameAlreadyExists)
         // Check if admin exists
-        val admin = repoUser.findById(adminId)
+        repoUser.findById(adminId)
             ?: return@run failure(ChannelError.AdminNotFound)
         // Create channel
-        val channel = repoChannel.createChannel(name, description, admin, visibility)
+        val channel = repoChannel.createChannel(name, description, adminId, visibility)
         success(channel)
     }
 
@@ -45,9 +45,9 @@ class ChannelServices(
     fun getJoinedChannels(
         userID : UInt
     ): Either<ChannelError, List<Channel>> = trxManager.run {
-        val user = repoUser.findById(userID)
+        repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
-        success(repoChannel.findAllByUser(user))
+        success(repoChannel.findAllByUser(userID))
     }
     fun joinChannelByInvite(
         userID: UInt,
