@@ -1,11 +1,13 @@
 package pt.isel
 
+import java.util.*
+
 interface RepositoryUser : Repository<User>{
-    fun createUser(name : String, email : Email, password : String) : User
+    fun createUser(name : String, email : Email, token : UUID, password : String) : User
 
-    fun emailExists(email: Email) : Boolean
+    //fun emailExists(email: Email) : Boolean
 
-    fun getUserbyEmail(email : Email) : User
+    fun findByEmail(email : Email) : User?
 
-    fun updateUser(user : User, newName : String? = null, newEmail: Email? = null, newPassword: String? = null) : User
+    //fun updateUser(user : User, newName : String? = null, newEmail: Email? = null, newPassword: String? = null) : User
 }

@@ -8,6 +8,7 @@ sealed class UserError {
     data object EmailNotFound : UserError()
     data object IncorrectPassword : UserError()
     data object EmailAlreadyExists: UserError()
+    data object PasswordsDoNotMatch: UserError()
 
 }
 
@@ -19,9 +20,7 @@ class UserServices(
         email : Email,
         password: String
     ) : Either<UserError, UUID> = trxManager.run {
-        if (!repoUser.emailExists(email))
-            return@run failure(UserError.EmailNotFound)
-        val user = repoUser.getUserbyEmail(email)
+        val user = repoUser.findByEmail(email) ?: return@run failure(UserError.EmailNotFound)
         //check if passwords correspond
         if (password != user.password)
             return@run failure(UserError.IncorrectPassword)
@@ -35,10 +34,10 @@ class UserServices(
         password: String,
     ) : Either<UserError, User> = trxManager.run {
         //checks if email does not exist
-        if (repoUser.emailExists(email))
+        if (repoUser.findByEmail(email) != null)
             return@run failure(UserError.EmailAlreadyExists)
-
-        val user = repoUser.createUser(name, email, password)
+        val token = UUID.randomUUID()
+        val user = repoUser.createUser(name, email, token, password)
 
         success(user)
     }
@@ -48,10 +47,11 @@ class UserServices(
         password : String,
         newPassword : String
     ) : Either<UserError, User> = trxManager.run {
-        if (!repoUser.emailExists(email)) return@run failure(UserError.EmailNotFound)
-        val user = repoUser.getUserbyEmail(email)
-        val newUser = repoUser.updateUser(user, newPassword = newPassword)
-        success(newUser)
+        val user = repoUser.findByEmail(email) ?: return@run failure(UserError.EmailNotFound)
+        if(user.password != password) return@run failure(UserError.PasswordsDoNotMatch)
+        val updatedUser = user.copy(password = newPassword)
+        repoUser.save(updatedUser)
+        success(updatedUser)
     }
 
     //change email
@@ -59,10 +59,12 @@ class UserServices(
         email : Email,
         newEmail : Email
     ) : Either<UserError, User> = trxManager.run {
-        if (!repoUser.emailExists(email)) return@run failure(UserError.EmailNotFound)
-        val user = repoUser.getUserbyEmail(email)
-        val newUser = repoUser.updateUser(user, newEmail = newEmail)
-        success(newUser)
+        val user = repoUser.findByEmail(email) ?: return@run failure(UserError.EmailNotFound)
+        if (repoUser.findByEmail(newEmail) != null)
+            return@run failure(UserError.EmailAlreadyExists)
+        val updatedUser = user.copy(email = newEmail)
+        repoUser.save(updatedUser)
+        success(updatedUser)
     }
     //change username
     fun changeUsername(
@@ -70,8 +72,9 @@ class UserServices(
         newUsername : String
     ) : Either<UserError, User> = trxManager.run {
         val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
-        val newUser = repoUser.updateUser(user, newName = newUsername)
-        success(newUser)
+        val updatedUser = user.copy(name = newUsername)
+        repoUser.save(updatedUser)
+        success(updatedUser)
     }
     //get user info
     fun getUserInfo(
