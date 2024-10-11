@@ -5,6 +5,8 @@ import java.util.UUID
 sealed class ChannelError {
     data object ChannelNotFound : ChannelError()
     data object ChannelNameAlreadyExists: ChannelError()
+
+    data object ChannelNotPublic : ChannelError()
     data object AdminNotFound: ChannelError()
     data object UserNotFound: ChannelError()
     data object InvalidInvite: ChannelError()
@@ -69,6 +71,7 @@ class ChannelServices(
             ?: return@run failure(ChannelError.UserNotFound)
         val channel = repoChannel.findById(channelID)
             ?: return@run failure(ChannelError.ChannelNotFound)
+        if (channel.visibility == Visibility.PRIVATE) return@run failure(ChannelError.ChannelNotPublic)
         success(repoParticipant.joinChannel(channel, user, defaultPublicPermission))
     }
 
