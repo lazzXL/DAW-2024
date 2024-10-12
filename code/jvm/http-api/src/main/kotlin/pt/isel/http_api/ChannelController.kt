@@ -8,7 +8,7 @@ import pt.isel.*
 import pt.isel.http_api.model.CreateChannelInput
 import pt.isel.http_api.model.JoinChannelViaInviteInput
 import pt.isel.http_api.model.JoinPublicChannelInput
-import pt.isel.http_api.model.handleFailure
+import pt.isel.http_api.model.handleChannelFailure
 
 
 @RestController
@@ -21,7 +21,7 @@ class ChannelController(
     fun getChannel(@PathVariable channelId : UInt): ResponseEntity<Channel> {
         return when (val result: Either<ChannelError, Channel> = channelServices.getChannel(channelId)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 
@@ -29,7 +29,7 @@ class ChannelController(
     fun getJoinedChannels(@PathVariable userId : UInt): ResponseEntity<List<Channel>> {
         return when (val result: Either<ChannelError, List<Channel>> = channelServices.getJoinedChannels(userId)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 
@@ -37,7 +37,7 @@ class ChannelController(
     fun joinChannelByInvite(@RequestBody joinInput : JoinChannelViaInviteInput): ResponseEntity<Any> {
         return when (val result: Either<ChannelError, Channel> = channelServices.joinChannelByInvite(joinInput.userId, joinInput.code)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 
@@ -45,7 +45,7 @@ class ChannelController(
     fun joinPublicChannel(@RequestBody joinInput : JoinPublicChannelInput): ResponseEntity<Any> {
         return when (val result: Either<ChannelError, Channel> = channelServices.joinPublicChannel(joinInput.userId, joinInput.channelId) ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 
@@ -56,7 +56,7 @@ class ChannelController(
 
         return when (result) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 
@@ -64,7 +64,7 @@ class ChannelController(
     fun leaveChannel(@PathVariable userId : UInt, @PathVariable channelId : UInt): ResponseEntity<Channel> {
         return when (val result: Either<ChannelError, Channel> = channelServices.leaveChannel(userId, channelId)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleFailure(result.value)
+            is Failure -> handleChannelFailure(result.value)
         }
     }
 

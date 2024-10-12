@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import pt.isel.*
 import pt.isel.http_api.model.LoginInput
 import pt.isel.http_api.model.RegistrationInput
+import pt.isel.http_api.model.handleUserFailure
 import java.util.UUID
 
 
@@ -29,7 +30,7 @@ class UserController(
 
         return when (result) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> TODO()
+            is Failure -> handleUserFailure(result.value)
 
         }
     }
@@ -44,7 +45,7 @@ class UserController(
 
         return when (result) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> TODO()
+            is Failure -> handleUserFailure(result.value)
         }
     }
 }
