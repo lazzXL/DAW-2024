@@ -1,5 +1,6 @@
 package pt.isel
 
+import jakarta.inject.Named
 import java.util.*
 
 sealed class UserError {
@@ -12,6 +13,7 @@ sealed class UserError {
 
 }
 
+@Named
 class UserServices(
     private val trxManager: TransactionManager
 ){

@@ -1,5 +1,6 @@
 package pt.isel
 
+import jakarta.inject.Named
 import java.util.*
 
 sealed class InvitationError {
@@ -10,6 +11,7 @@ sealed class InvitationError {
     data object UserNotInChannel : InvitationError()
 }
 
+@Named
 class InvitationServices(
     private val trxManager: TransactionManager
 ) {

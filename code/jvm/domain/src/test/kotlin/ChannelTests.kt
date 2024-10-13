@@ -10,25 +10,25 @@ class ChannelTest {
 
     @Test
     fun `Channel initialization with valid parameters`() {
-        val id = UUID.randomUUID()
-        val admin = UUID.randomUUID()
+        val id = 321U
+        val adminId = 123U
         val name = "Test Channel"
         val description = "This is a test channel"
         val visibility = Visibility.PUBLIC
 
-        val channel = Channel(id, name, admin, description, visibility)
+        val channel = Channel(id, name, adminId, description, visibility)
 
         assertEquals(id, channel.id)
         assertEquals(name, channel.name)
-        assertEquals(admin, channel.admin)
+        assertEquals(adminId, channel.adminID)
         assertEquals(description, channel.description)
         assertEquals(visibility, channel.visibility)
     }
 
     @Test
     fun `Channel initialization with invalid name length`() {
-        val id = UUID.randomUUID()
-        val admin = UUID.randomUUID()
+        val id = 321U
+        val admin = 123U
         val name = "T"
         val description = "This is a test channel"
         val visibility = Visibility.PUBLIC
@@ -41,8 +41,8 @@ class ChannelTest {
 
     @Test
     fun `Channel initialization with invalid description length`() {
-        val id = UUID.randomUUID()
-        val admin = UUID.randomUUID()
+        val id = 9876U
+        val admin = 9883U
         val name = "Test Channel"
         val description = "This is a test channel".repeat(100)
         val visibility = Visibility.PUBLIC

@@ -9,31 +9,33 @@ class UserTest {
 
     @Test
     fun `User initialization with valid parameters`() {
-        val id = UUID.randomUUID()
+        val id = 123U
+        val token = UUID.randomUUID()
         val name = "Test User"
         val email = Email("test@example.com")
         val password = "password"
-        val channels = setOf(UUID.randomUUID())
 
-        val user = User(id, name, email, password, channels)
+        val user = User(id, token, name, email, password)
 
         assertEquals(id, user.id)
+        assertEquals(token, user.token)
         assertEquals(name, user.name)
         assertEquals(email, user.email)
         assertEquals(password, user.password)
-        assertEquals(channels, user.channels)
     }
 
     @Test
     fun `User initialization with invalid name length`() {
-        val id = UUID.randomUUID()
+        val id = 321U
+        val token = UUID.randomUUID()
         val name = "T"
         val email = Email("test@example.com")
         val password = "password"
-        val channels = setOf(UUID.randomUUID())
-
         assertFailsWith<IllegalArgumentException> {
-            User(id, name, email, password, channels)
+            User(id, token, name, email, password)
         }
     }
 }
+
+
+

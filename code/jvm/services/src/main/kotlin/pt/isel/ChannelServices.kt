@@ -1,5 +1,6 @@
 package pt.isel
 
+import jakarta.inject.Named
 import java.util.UUID
 
 sealed class ChannelError {
@@ -13,11 +14,10 @@ sealed class ChannelError {
 
 }
 
+@Named
 class ChannelServices(
     private val trxManager: TransactionManager
 ) {
-
-    private val defaultPublicPermission = Permission.READ_ONLY
 
     fun createChannel(
         name: String,
@@ -51,40 +51,7 @@ class ChannelServices(
             ?: return@run failure(ChannelError.UserNotFound)
         success(repoChannel.findAllByUser(userID))
     }
-    fun joinChannelByInvite(
-        userID: UInt,
-        code: UUID
-    ): Either<ChannelError, Channel> = trxManager.run {
-        val user = repoUser.findById(userID)
-            ?: return@run failure(ChannelError.UserNotFound)
-        val invite = repoInvite.findByCode(code)
-            ?: return@run failure(ChannelError.InvalidInvite)
-        val channel = invite.channel
-        success(repoParticipant.joinChannel(channel, user, invite.permission))
-    }
 
-    fun joinPublicChannel(
-        userID: UInt,
-        channelID: UInt
-    ): Either<ChannelError, Channel> = trxManager.run {
-        val user = repoUser.findById(userID)
-            ?: return@run failure(ChannelError.UserNotFound)
-        val channel = repoChannel.findById(channelID)
-            ?: return@run failure(ChannelError.ChannelNotFound)
-        if (channel.visibility == Visibility.PRIVATE) return@run failure(ChannelError.ChannelNotPublic)
-        success(repoParticipant.joinChannel(channel, user, defaultPublicPermission))
-    }
-
-    fun leaveChannel(
-        userID: UInt,
-        channelID: UInt
-    ): Either<ChannelError, Channel> = trxManager.run {
-        val user = repoUser.findById(userID)
-            ?: return@run failure(ChannelError.UserNotFound)
-        val channel = repoChannel.findById(channelID)
-            ?: return@run failure(ChannelError.ChannelNotFound)
-        success(repoParticipant.leaveChannel(channel, user))
-    }
 
     fun getPublicChannels(): Either<ChannelError,List<Channel>> = trxManager.run {
         success(repoChannel.getPublicChannels())

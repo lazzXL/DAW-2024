@@ -17,8 +17,6 @@ data class Message (
     val id : UInt,
     val content : String,
     val date : LocalDateTime,
-    //val user : User,
-    //val channel: Channel
     val sender  : Participant
 ){
     init {

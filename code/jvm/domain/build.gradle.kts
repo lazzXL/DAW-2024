@@ -5,23 +5,19 @@ plugins {
 group = "pt.isel"
 version = "0.0.1-SNAPSHOT"
 
-kotlin {
-    jvmToolchain(17)
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(kotlin("test"))
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
 kotlin {
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
+    jvmToolchain(21)
 }
 
 tasks.withType<Test> {

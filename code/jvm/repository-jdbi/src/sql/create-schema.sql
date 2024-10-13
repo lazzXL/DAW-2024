@@ -19,17 +19,7 @@ CREATE TABLE dbo.channels
     description     TEXT,
     admin_id        INT NOT NULL,
     visibility      VARCHAR(10)  NOT NULL CHECK (visibility IN ('PUBLIC', 'PRIVATE')),
-    FOREIGN KEY (admin) REFERENCES dbo.users (id)
-);
-
--- Create table for time slots in the dbo schema
-CREATE TABLE dbo.messages
-(
-    id                  SERIAL PRIMARY KEY,
-    content             TEXT,
-    date_sent           TIMESTAMP   NOT NULL,
-    sender_id           INT         NOT NULL,
-    FOREIGN KEY (sender_id) REFERENCES dbo.participants (id)
+    FOREIGN KEY (admin_id) REFERENCES dbo.users (id)
 );
 
 -- Create table for invitations in the dbo schema
@@ -52,3 +42,14 @@ CREATE TABLE dbo.participants
     FOREIGN KEY (user_id) REFERENCES dbo.users (id),
     FOREIGN KEY (channel_id) REFERENCES dbo.channels (id)
 );
+
+-- Create table for time slots in the dbo schema
+CREATE TABLE dbo.messages
+(
+    id                  SERIAL PRIMARY KEY,
+    content             TEXT,
+    date_sent           TIMESTAMP   NOT NULL,
+    sender_id           INT         NOT NULL,
+    FOREIGN KEY (sender_id) REFERENCES dbo.participants (id)
+);
+

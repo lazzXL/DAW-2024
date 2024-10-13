@@ -33,21 +33,21 @@ class ChannelController(
         }
     }
 
-    @PostMapping("/join-invite")
-    fun joinChannelByInvite(@RequestBody joinInput : JoinChannelViaInviteInput): ResponseEntity<Any> {
-        return when (val result: Either<ChannelError, Channel> = channelServices.joinChannelByInvite(joinInput.userId, joinInput.code)) {
-            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleChannelFailure(result.value)
-        }
-    }
+//    @PostMapping("/join-invite")
+//    fun joinChannelByInvite(@RequestBody joinInput : JoinChannelViaInviteInput): ResponseEntity<Any> {
+//        return when (val result: Either<ChannelError, Channel> = channelServices.joinChannelByInvite(joinInput.userId, joinInput.code)) {
+//            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
+//            is Failure -> handleChannelFailure(result.value)
+//        }
+//    }
 
-    @PostMapping("/join")
-    fun joinPublicChannel(@RequestBody joinInput : JoinPublicChannelInput): ResponseEntity<Any> {
-        return when (val result: Either<ChannelError, Channel> = channelServices.joinPublicChannel(joinInput.userId, joinInput.channelId) ) {
-            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleChannelFailure(result.value)
-        }
-    }
+//    @PostMapping("/join")
+//    fun joinPublicChannel(@RequestBody joinInput : JoinPublicChannelInput): ResponseEntity<Any> {
+//        return when (val result: Either<ChannelError, Channel> = channelServices.joinPublicChannel(joinInput.userId, joinInput.channelId) ) {
+//            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
+//            is Failure -> handleChannelFailure(result.value)
+//        }
+//    }
 
     @PostMapping("/create")
     fun createChannel(@RequestBody createInput : CreateChannelInput): ResponseEntity<Any> {
@@ -60,13 +60,13 @@ class ChannelController(
         }
     }
 
-    @DeleteMapping("/leave/{userId}/{channelId}")
-    fun leaveChannel(@PathVariable userId : UInt, @PathVariable channelId : UInt): ResponseEntity<Channel> {
-        return when (val result: Either<ChannelError, Channel> = channelServices.leaveChannel(userId, channelId)) {
-            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> handleChannelFailure(result.value)
-        }
-    }
+//    @DeleteMapping("/leave/{userId}/{channelId}")
+//    fun leaveChannel(@PathVariable userId : UInt, @PathVariable channelId : UInt): ResponseEntity<Channel> {
+//        return when (val result: Either<ChannelError, Channel> = channelServices.leaveChannel(userId, channelId)) {
+//            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
+//            is Failure -> handleChannelFailure(result.value)
+//        }
+//    }
 
 }
 

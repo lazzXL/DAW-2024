@@ -1,5 +1,6 @@
 package pt.isel
 
+import jakarta.inject.Named
 import java.time.LocalDateTime
 
 sealed class MessageError {
@@ -8,6 +9,7 @@ sealed class MessageError {
 
 }
 
+@Named
 class MessageServices(
     private val trxManager: TransactionManager
 ) {

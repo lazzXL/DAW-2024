@@ -19,9 +19,16 @@ class RepositoryChannelJdbi(
             .findOne()
             .orElse(null)
 
-    // TODO: NOT SURE ABOUT THE INTENTION BEHIND FINDING ALL CHANNELS (USER JOINED CHANNELS OR ALL PUBLIC CHANNELS)
-    // TODO: EITHER WAY BOTH ARE IMPLEMENTED IN findAllByUser and getPublicChannels
-    override fun findAll(): List<Channel> = getPublicChannels()
+    override fun findAll(): List<Channel> =
+        handle
+            .createQuery(
+                """
+                SELECT c.* FROM dbo.channels c
+                WHERE c.visibility = :visibility
+                """,
+            ).bind("visibility", "Public")
+            .map { rs, _ -> mapRowToChannel(rs) }
+            .list()
 
     override fun save(entity: Channel) {
         handle
@@ -94,18 +101,9 @@ class RepositoryChannelJdbi(
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
-    // TODO: I think findAll is supposed to be this functionality
-    override fun getPublicChannels(): List<Channel> =
-        handle
-            .createQuery(
-                """
-            SELECT c.* FROM dbo.channels c
-            WHERE c.visibility = :visibility
-            """,
-            ).bind("visibility", "Public")
-            .map { rs, _ -> mapRowToChannel(rs) }
-            .list()
-
+    override fun getPublicChannels(): List<Channel> {
+        TODO("Not yet implemented")
+    }
 
     /*override fun clear() {
         handle.createUpdate("DELETE FROM dbo.channels").execute()
