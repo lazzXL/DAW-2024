@@ -2,7 +2,6 @@ package pt.isel
 
 import org.jdbi.v3.core.Handle
 import java.sql.ResultSet
-import java.util.*
 
 class RepositoryParticipantJdbi(
     private val handle: Handle,
@@ -35,7 +34,7 @@ class RepositoryParticipantJdbi(
             .createQuery(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
-                u.name as user_name, u.token, u.email, u.password
+                u.name as user_name, u.email, u.password
                 FROM dbo.participants p
                 JOIN dbo.users u ON p.user_id = u.id
                 JOIN dbo.channels c ON p.channel_id = c.id
@@ -54,7 +53,7 @@ class RepositoryParticipantJdbi(
             .createQuery(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
-                u.name as user_name, u.token, u.email, u.password
+                u.name as user_name, u.email, u.password
                 FROM dbo.participants p
                 JOIN dbo.channels c ON p.channel_id = c.id
                 JOIN dbo.users u ON p.user_id = u.id
@@ -72,7 +71,7 @@ class RepositoryParticipantJdbi(
             .createQuery(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
-                u.name as user_name, u.token, u.email, u.password
+                u.name as user_name, u.email, u.password
                 FROM dbo.participants p
                 JOIN dbo.channels c ON p.channel_id = c.id
                 JOIN dbo.users u ON p.user_id = u.id
@@ -110,10 +109,9 @@ class RepositoryParticipantJdbi(
     private fun mapRowToParticipant(rs: ResultSet): Participant {
         val user = User(
             rs.getInt("user_id").toUInt(),
-            UUID.fromString(rs.getString("token")),
             rs.getString("user_name"),
             Email(rs.getString("email")),
-            rs.getString("password"))
+            PasswordValidationInfo(rs.getString("password")))
         val channel = Channel(
             rs.getInt("channel_id").toUInt(),
             rs.getString("channel_name"),

@@ -19,7 +19,7 @@ class RepositoryChannelJdbiTests : RepositoryJdbiTests() {
     @BeforeEach
     fun addAdminUser() {
         runWithHandle { handle: Handle ->
-            val user = RepositoryUserJdbi(handle).createUser("Alice",Email("alice99@email.com"),UUID.randomUUID(),"password")
+            val user = RepositoryUserJdbi(handle).createUser("Alice",Email("alice99@email.com"),PasswordValidationInfo(newTokenValidationData()))
             channelAdminUserId = user.id
         }
     }

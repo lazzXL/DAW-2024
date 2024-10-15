@@ -1,14 +1,13 @@
 package pt.isel
 
 import org.junit.jupiter.api.Test
-import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 
 class RepositoryUserJdbiTests : RepositoryJdbiTests() {
-
+    //TODO: Tests for token functions
     @Test
     fun `test create user and find it`() =
         runWithHandle { handle ->
@@ -16,8 +15,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
             repoUsers.createUser(
                 "Alice",
                 Email("alice99@example.com"),
-                UUID.randomUUID(),
-                "password9"
+                PasswordValidationInfo(newTokenValidationData())
             )
             val users = repoUsers.findAll()
             assertEquals(1, users.size)
@@ -32,8 +30,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice$it",
                     Email("alice99$it@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             }
             val users = repoUsers.findAll()
@@ -51,8 +48,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice",
                     Email("alice99@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             val user = repoUsers.findById(alice.id)
             assertNotNull(user)
@@ -67,10 +63,9 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice",
                     Email("alice99@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
-            val modifiedAlice = alice.copy(password = "newPassword")
+            val modifiedAlice = alice.copy(name = "AliceSmith")
             repoUsers.save(modifiedAlice)
             val user = repoUsers.findById(alice.id)
             assertNotNull(user)
@@ -85,8 +80,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice",
                     Email("alice99@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             val users = repoUsers.findAll()
             assertEquals(1, users.size)
@@ -104,8 +98,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice$it",
                     Email("alice99$it@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             }
             val users = repoUsers.findAll()
@@ -124,8 +117,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     "Alice",
                     email,
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             val user = repoUsers.findByEmail(email)
             assertNotNull(user)
@@ -141,12 +133,10 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
                 repoUsers.createUser(
                     username,
                     Email("alice99@example.com"),
-                    UUID.randomUUID(),
-                    "password9"
+                    PasswordValidationInfo(newTokenValidationData())
                 )
             val user = repoUsers.findByName(username)
             assertNotNull(user)
             assertEquals(user, alice)
         }
-
 }

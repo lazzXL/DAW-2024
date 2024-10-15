@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation(project(":domain"))
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     testImplementation(kotlin("test"))
 }
 

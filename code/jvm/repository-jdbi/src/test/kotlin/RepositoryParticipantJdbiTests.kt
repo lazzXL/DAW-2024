@@ -3,7 +3,6 @@ package pt.isel
 import org.jdbi.v3.core.Handle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -18,8 +17,8 @@ class RepositoryParticipantJdbiTests : RepositoryJdbiTests() {
     @BeforeEach
     fun createUserAndChannel() {
         runWithHandle { handle: Handle ->
-            val admin = RepositoryUserJdbi(handle).createUser("Alice",Email("alice99@email.com"),UUID.randomUUID(),"password")
-            user = RepositoryUserJdbi(handle).createUser("BobMarley",Email("bob99@email.com"),UUID.randomUUID(),"password")
+            val admin = RepositoryUserJdbi(handle).createUser("Alice",Email("alice99@email.com"),PasswordValidationInfo(newTokenValidationData()))
+            user = RepositoryUserJdbi(handle).createUser("BobMarley",Email("bob99@email.com"),PasswordValidationInfo(newTokenValidationData()))
             channel = RepositoryChannelJdbi(handle).createChannel("Channel","Description",admin.id,Visibility.PUBLIC)
         }
     }
@@ -42,7 +41,7 @@ class RepositoryParticipantJdbiTests : RepositoryJdbiTests() {
     fun `test create multiple participants and find them`() =
         runWithHandle { handle ->
             val repoUsers = RepositoryUserJdbi(handle)
-            val otherUser = repoUsers.createUser("Charles",Email("charles@email.com"), UUID.randomUUID(),"password")
+            val otherUser = repoUsers.createUser("Charles",Email("charles@email.com"), PasswordValidationInfo(newTokenValidationData()))
             val repoParticipants = RepositoryParticipantJdbi(handle)
             repoParticipants.createParticipant(
                 user,
@@ -97,7 +96,7 @@ class RepositoryParticipantJdbiTests : RepositoryJdbiTests() {
     fun `test if user is participant`() =
         runWithHandle { handle ->
             val repoParticipants = RepositoryParticipantJdbi(handle)
-            val userNotInChannel = RepositoryUserJdbi(handle).createUser("David", Email("david@email.com"),UUID.randomUUID(),"password")
+            val userNotInChannel = RepositoryUserJdbi(handle).createUser("David", Email("david@email.com"),PasswordValidationInfo(newTokenValidationData()))
             repoParticipants.createParticipant(
                 user,
                 channel,

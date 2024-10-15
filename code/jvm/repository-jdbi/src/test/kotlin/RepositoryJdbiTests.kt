@@ -3,16 +3,18 @@ package pt.isel
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.postgresql.ds.PGSimpleDataSource
-import java.util.UUID
-import kotlin.test.assertEquals
+import kotlin.math.abs
+import kotlin.random.Random
 
 
 open class RepositoryJdbiTests {
     companion object {
         @JvmStatic
         protected fun runWithHandle(block: (Handle) -> Unit) = jdbi.useTransaction<Exception>(block)
+
+        @JvmStatic
+        protected fun newTokenValidationData() = "token-${abs(Random.nextLong())}"
 
         protected val jdbi =
             Jdbi

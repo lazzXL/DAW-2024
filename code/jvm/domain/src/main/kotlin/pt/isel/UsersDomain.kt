@@ -1,11 +1,14 @@
 package pt.isel
 
-import java.security.SecureRandom
+import jakarta.inject.Named
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.springframework.security.crypto.password.PasswordEncoder
+import java.security.SecureRandom
 import java.util.Base64.getUrlDecoder
 import java.util.Base64.getUrlEncoder
 
+@Named
 class UsersDomain(
     private val passwordEncoder: PasswordEncoder,
     private val tokenEncoder: TokenEncoder,
@@ -28,7 +31,7 @@ class UsersDomain(
          password: String,
          validationInfo: PasswordValidationInfo
      ) = passwordEncoder
-         .matches(password, validationInfo)
+         .matches(password, validationInfo.validationInfo)
 
      fun createPasswordValidationInformation(password: String) =
          PasswordValidationInfo(
