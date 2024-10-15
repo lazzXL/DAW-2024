@@ -13,7 +13,7 @@ class RepositoryRegisterInvitationJdbi(
             .createQuery(
                 """
             SELECT i.* FROM dbo.register_invitations i
-            WHERE c.code = :code
+            WHERE i.code = :code
             """,
             ).bind("code", code.toString())
             .map { rs, _ -> mapRowToInvitation(rs) }
@@ -39,7 +39,7 @@ class RepositoryRegisterInvitationJdbi(
     override fun findById(id: UInt): RegisterInvitation? =
         handle
             .createQuery("""
-                SELECT * FROM dbo.register_invitations 
+                SELECT * FROM dbo.register_invitations
                 WHERE id = :id
                 """)
             .bind("id", id.toInt())
@@ -62,7 +62,7 @@ class RepositoryRegisterInvitationJdbi(
                 WHERE id = :id
                 """,
             ).bind("id", entity.id.toInt())
-            .bind("user_id", entity.code.toString())
+            .bind("code", entity.code.toString())
             .execute()
     }
 
@@ -83,4 +83,6 @@ class RepositoryRegisterInvitationJdbi(
             id = rs.getInt("id").toUInt(),
             code = UUID.fromString(rs.getString("code")),
         )
+
+
 }
