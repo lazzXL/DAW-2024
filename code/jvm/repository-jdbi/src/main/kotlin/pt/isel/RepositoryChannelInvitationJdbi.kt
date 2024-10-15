@@ -12,9 +12,15 @@ class RepositoryChannelInvitationJdbi(
         handle
             .createQuery(
                 """
-            SELECT i.* FROM dbo.channel_invitations i
-            JOIN dbo.channels c ON i.channel_id = c.id 
-            WHERE c.code = :code
+                SELECT i.*,
+                c.id as c_id,
+                c.name,
+                c.description,
+                c.admin_id,
+                c.visibility
+                FROM dbo.channel_invitations i
+                JOIN dbo.channels c ON i.channel_id = c.id 
+                WHERE i.code = :code
             """,
             ).bind("code", code.toString())
             .map { rs, _ -> mapRowToInvitation(rs) }
@@ -53,9 +59,17 @@ class RepositoryChannelInvitationJdbi(
     override fun findById(id: UInt): ChannelInvitation? =
         handle
             .createQuery(
-                """SELECT * FROM dbo.channel_invitations 
-                    JOIN dbo.channels c ON i.channel_id = c.id 
-                    WHERE id = :id""")
+                """
+                SELECT i.*,
+                c.id as c_id,
+                c.name,
+                c.description,
+                c.admin_id,
+                c.visibility
+                FROM dbo.channel_invitations i
+                JOIN dbo.channels c ON i.channel_id = c.id 
+                WHERE i.id = :id"""
+            )
             .bind("id", id.toInt())
             .map { rs, _ -> mapRowToInvitation(rs) }
             .findOne()
@@ -64,7 +78,12 @@ class RepositoryChannelInvitationJdbi(
 
     override fun findAll(): List<ChannelInvitation> =
         handle
-            .createQuery("SELECT * FROM dbo.channel_invitations")
+            .createQuery("""
+                SELECT i.*, c.id as c_id, c.name, c.description, c.admin_id, c.visibility
+                FROM dbo.channel_invitations i
+                JOIN dbo.channels c ON i.channel_id = c.id 
+                """
+            )
             .map { rs, _ -> mapRowToInvitation(rs) }
             .list()
 
@@ -85,7 +104,7 @@ class RepositoryChannelInvitationJdbi(
 
     private fun mapRowToInvitation(rs: ResultSet): ChannelInvitation {
         val channel = Channel(
-            id = rs.getInt("c.id").toUInt(),
+            id = rs.getInt("channel_id").toUInt(),
             name = rs.getString("name"),
             adminID = rs.getInt("admin_id").toUInt(),
             description = rs.getString("description"),

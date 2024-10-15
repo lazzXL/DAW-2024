@@ -20,21 +20,23 @@ class RepositoryParticipantJdbi(
                 INSERT INTO dbo.participants (user_id, channel_id, permission )
                 VALUES (:user_id, :channel_id, :permission)
                 """,
-                ).bind("user_id", user.id)
-                .bind("channel_id", channel.id)
+                ).bind("user_id", user.id.toInt())
+                .bind("channel_id", channel.id.toInt())
                 .bind("permission", permission.name)
                 .executeAndReturnGeneratedKeys()
-                .mapTo(UInt::class.java)
+                .mapTo(Int::class.java)
                 .one()
 
-        return Participant(id, user, channel, permission )
+        return Participant(id.toUInt(), user, channel, permission )
     }
 
-    override fun isParticipant(channelId: UInt, userId: UInt): Boolean {
-        val i = handle
+    override fun isParticipant(channelId: UInt, userId: UInt): Boolean =
+        handle
             .createQuery(
                 """
-                SELECT p.* FROM dbo.participants p
+                SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
+                u.name as user_name, u.token, u.email, u.password
+                FROM dbo.participants p
                 JOIN dbo.users u ON p.user_id = u.id
                 JOIN dbo.channels c ON p.channel_id = c.id
                 WHERE p.channel_id = :channelId
@@ -44,18 +46,40 @@ class RepositoryParticipantJdbi(
             .bind("userId", userId.toInt())
             .map { rs, _ -> mapRowToParticipant(rs) }
             .findOne()
-            .orElse(null)
-        return true
-    }
+            .isPresent
 
 
     override fun findById(id: UInt): Participant? {
-        TODO("Not yet implemented")
+        return handle
+            .createQuery(
+                """
+                SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
+                u.name as user_name, u.token, u.email, u.password
+                FROM dbo.participants p
+                JOIN dbo.channels c ON p.channel_id = c.id
+                JOIN dbo.users u ON p.user_id = u.id
+                WHERE p.id = :id
+                """,
+            )
+            .bind("id", id.toInt())
+            .map { rs, _ -> mapRowToParticipant(rs) }
+            .findOne()
+            .orElse(null)
     }
 
-    override fun findAll(): List<Participant> {
-        TODO("Not yet implemented")
-    }
+    override fun findAll(): List<Participant> =
+        handle
+            .createQuery(
+                """
+                SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
+                u.name as user_name, u.token, u.email, u.password
+                FROM dbo.participants p
+                JOIN dbo.channels c ON p.channel_id = c.id
+                JOIN dbo.users u ON p.user_id = u.id
+                """)
+            .map { rs, _ -> mapRowToParticipant(rs) }
+            .list()
+
 
     override fun save(entity: Participant) {
         handle
@@ -65,9 +89,9 @@ class RepositoryParticipantJdbi(
                 SET user_id = :user_id, channel_id = :channel_id, permission = :permission
                 WHERE id = :id
                 """,
-            ).bind("id", entity.id)
-            .bind("user_id", entity.user.id)
-            .bind("channel_id", entity.channel.id)
+            ).bind("id", entity.id.toInt())
+            .bind("user_id", entity.user.id.toInt())
+            .bind("channel_id", entity.channel.id.toInt())
             .bind("permission", entity.permission.name)
             .execute()
     }
@@ -75,7 +99,7 @@ class RepositoryParticipantJdbi(
     override fun deleteById(id: UInt) {
         handle
             .createUpdate("DELETE FROM dbo.participants WHERE id = :id")
-            .bind("id", id)
+            .bind("id", id.toInt())
             .execute()
     }
 
@@ -87,12 +111,12 @@ class RepositoryParticipantJdbi(
         val user = User(
             rs.getInt("user_id").toUInt(),
             UUID.fromString(rs.getString("token")),
-            rs.getString("u.name"),
+            rs.getString("user_name"),
             Email(rs.getString("email")),
             rs.getString("password"))
         val channel = Channel(
             rs.getInt("channel_id").toUInt(),
-            rs.getString("c.name"),
+            rs.getString("channel_name"),
             rs.getInt("admin_id").toUInt(),
             rs.getString("description"),
             Visibility.valueOf(rs.getString("visibility"))

@@ -13,7 +13,6 @@ class RepositoryRegisterInvitationJdbi(
             .createQuery(
                 """
             SELECT i.* FROM dbo.register_invitations i
-            JOIN dbo.channels c ON i.channel_id = c.id 
             WHERE c.code = :code
             """,
             ).bind("code", code.toString())
@@ -41,7 +40,6 @@ class RepositoryRegisterInvitationJdbi(
         handle
             .createQuery("""
                 SELECT * FROM dbo.register_invitations 
-                JOIN dbo.channels c ON i.channel_id = c.id 
                 WHERE id = :id
                 """)
             .bind("id", id.toInt())
@@ -85,6 +83,4 @@ class RepositoryRegisterInvitationJdbi(
             id = rs.getInt("id").toUInt(),
             code = UUID.fromString(rs.getString("code")),
         )
-
-
 }

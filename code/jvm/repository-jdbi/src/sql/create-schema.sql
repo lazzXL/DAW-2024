@@ -28,7 +28,7 @@ CREATE TABLE dbo.channel_invitations
     id              SERIAL PRIMARY KEY,
     code            VARCHAR(255) UNIQUE NOT NULL,
     channel_id      INT NOT NULL,
-    permission      VARCHAR(10) NOT NULL CHECK (permission IN ('READ-ONLY', 'READ-WRITE')),
+    permission      VARCHAR(10) NOT NULL CHECK (permission IN ('READ_ONLY', 'READ_WRITE')),
     FOREIGN KEY (channel_id) REFERENCES dbo.channels (id)
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE dbo.channel_invitations
 CREATE TABLE dbo.register_invitations
 (
     id              SERIAL PRIMARY KEY,
-    code            VARCHAR(255) UNIQUE NOT NULL,
+    code            VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Create table for participants in the dbo schema
@@ -45,7 +45,7 @@ CREATE TABLE dbo.participants
     id          SERIAL PRIMARY KEY,
     user_id     INT NOT NULL,
     channel_id  INT NOT NULL,
-    permission  VARCHAR(10) NOT NULL CHECK (permission IN ('READ-ONLY', 'READ-WRITE')),
+    permission  VARCHAR(10) NOT NULL CHECK (permission IN ('READ_ONLY', 'READ_WRITE')),
     FOREIGN KEY (user_id) REFERENCES dbo.users (id),
     FOREIGN KEY (channel_id) REFERENCES dbo.channels (id)
 );
