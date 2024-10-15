@@ -27,12 +27,11 @@ class RepositoryUserJdbi(
             .createUpdate(
                 """
             UPDATE dbo.users 
-            SET name = :name, email = :email , token = :token, password = :password
+            SET name = :name, email = :email , password = :password
             WHERE id = :id
             """,
             ).bind("name", entity.name)
             .bind("email", entity.email.toString())
-            .bind("token", entity.token.toString())
             .bind("password", entity.password)
             .bind("id", entity.id.toInt())
             .execute()
@@ -53,7 +52,7 @@ class RepositoryUserJdbi(
         name: String,
         email: Email,
         token: UUID,
-        password: String
+        password: PasswordValidationInfo
     ): User {
         val id =
             handle
@@ -66,12 +65,20 @@ class RepositoryUserJdbi(
                 ).bind("name", name)
                 .bind("email", email.toString())
                 .bind("token", token.toString())
-                .bind("password", password)
+                .bind("password", password.validationInfo)
                 .executeAndReturnGeneratedKeys()
                 .mapTo(Int::class.java)
                 .one()
 
-        return User(id.toUInt(), token, name, email, password)
+        return User(id.toUInt(), name, email, password)
+    }
+
+    override fun createToken(token: Token): Token {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTokenByTokenValidationInfo(tokenValidationInfo: TokenValidationInfo): Token? {
+        TODO("Not yet implemented")
     }
 
     override fun findByEmail(email: Email): User? =
@@ -96,8 +103,7 @@ class RepositoryUserJdbi(
             id = rs.getInt("id").toUInt(),
             name = rs.getString("name"),
             email = Email(rs.getString("email")),
-            token = UUID.fromString(rs.getString("token")),
-            password = rs.getString("password"),
+            password = PasswordValidationInfo(rs.getString("password")),
         )
     }
 

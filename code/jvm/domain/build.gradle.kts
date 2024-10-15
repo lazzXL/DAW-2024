@@ -11,6 +11,12 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+
+    api("org.springframework.security:spring-security-core:6.3.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 }
 
 tasks.test {

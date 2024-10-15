@@ -16,11 +16,10 @@ const val MAX_NAME_LENGTH = 40
  */
 data class User (
     val id : UInt,
-    val token : UUID,
+   // val token : UUID,
     val name : String,
     val email : Email,
-    val password : String,
-    //val channels : Set<UUID>
+    val password : PasswordValidationInfo
 ){
     init {
         require(name.length in MIN_NAME_LENGTH  .. MAX_NAME_LENGTH &&

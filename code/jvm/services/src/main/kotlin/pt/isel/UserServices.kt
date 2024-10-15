@@ -1,6 +1,7 @@
 package pt.isel
 
 import jakarta.inject.Named
+import kotlinx.datetime.Clock
 import java.util.*
 
 sealed class UserError {
@@ -16,25 +17,36 @@ sealed class UserError {
 
 @Named
 class UserServices(
-    private val trxManager: TransactionManager
+    private val trxManager: TransactionManager,
+    val usersDomain: UsersDomain,
+    private val clock: Clock
 ){
     //login
     fun login(
         name : String,
         password: String
-    ) : Either<UserError, UUID> = trxManager.run {
+    ) : Either<UserError, Token> = trxManager.run {
         val user = repoUser.findByName(name) ?: return@run failure(UserError.UserNotFound)
-        //check if passwords correspond
-        if (password != user.password)
+        if (!usersDomain.validatePassword(password, user.password))
             return@run failure(UserError.IncorrectPassword)
-        success(user.token)
+        val tokenValue = usersDomain.generateTokenValue()
+        val now = clock.now()
+        val newToken =
+            Token(
+                usersDomain.createTokenValidationInformation(tokenValue),
+                user.id,
+                createdAt = now,
+                lastUsedAt = now,
+            )
+        repoUser.createToken(newToken)
+        success(newToken)
     }
 
     //registration
     fun registration(
         email : Email,
         name: String,
-        password: String,
+        password: PasswordValidationInfo,
     ) : Either<UserError, User> = trxManager.run {
         if (repoUser.findByEmail(email) != null)
             return@run failure(UserError.EmailAlreadyExists)
@@ -45,6 +57,7 @@ class UserServices(
 
         success(user)
     }
+    /*
     //change password
     fun changePassword(
         email : Email,
@@ -58,6 +71,8 @@ class UserServices(
         success(updatedUser)
     }
 
+
+     */
     //change email
     fun changeEmail(
         email : Email,

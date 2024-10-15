@@ -16,6 +16,7 @@ dependencies {
     api(project(":domain"))
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }

@@ -60,3 +60,10 @@ CREATE TABLE dbo.messages
     FOREIGN KEY (sender_id) REFERENCES dbo.participants (id)
 );
 
+create table dbo.tokens
+(
+    token_validation VARCHAR(256) primary key,
+    user_id          int references dbo.Users (id),
+    created_at       bigint not null,
+    last_used_at     bigint not null
+);

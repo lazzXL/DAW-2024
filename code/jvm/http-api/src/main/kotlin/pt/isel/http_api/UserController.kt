@@ -21,8 +21,8 @@ class UserController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody userInput: LoginInput): ResponseEntity<UUID> {
-        val result: Either<UserError, UUID> = userService.login(
+    fun login(@RequestBody userInput: LoginInput): ResponseEntity<Token> {
+        val result: Either<UserError, Token> = userService.login(
             userInput.name,
             userInput.password
         )
@@ -35,6 +35,8 @@ class UserController(
     }
     @PostMapping("/register")
     fun register(@RequestBody registrationInput: RegistrationInput): ResponseEntity<User> {
+        TODO()
+        /*
         val email = Email(registrationInput.email)
         val result: Either<UserError, User> = userService.registration(
             email,
@@ -46,6 +48,7 @@ class UserController(
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleUserFailure(result.value)
         }
+         */
     }
 }
 
