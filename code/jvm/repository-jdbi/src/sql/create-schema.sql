@@ -5,7 +5,7 @@ CREATE SCHEMA IF NOT EXISTS dbo;
 CREATE TABLE dbo.users
 (
     id    SERIAL PRIMARY KEY,
-    name  VARCHAR(255)        NOT NULL,
+    name  VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     token VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
@@ -22,14 +22,21 @@ CREATE TABLE dbo.channels
     FOREIGN KEY (admin_id) REFERENCES dbo.users (id)
 );
 
--- Create table for invitations in the dbo schema
-CREATE TABLE dbo.invitations
+-- Create table for channel invitations in the dbo schema
+CREATE TABLE dbo.channel_invitations
 (
     id              SERIAL PRIMARY KEY,
     code            VARCHAR(255) UNIQUE NOT NULL,
     channel_id      INT NOT NULL,
     permission      VARCHAR(10) NOT NULL CHECK (permission IN ('READ-ONLY', 'READ-WRITE')),
     FOREIGN KEY (channel_id) REFERENCES dbo.channels (id)
+);
+
+-- Create table for register invitations in the dbo schema
+CREATE TABLE dbo.register_invitations
+(
+    id              SERIAL PRIMARY KEY,
+    code            VARCHAR(255) UNIQUE NOT NULL,
 );
 
 -- Create table for participants in the dbo schema

@@ -2,10 +2,7 @@ package pt.isel.http_api.model
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import pt.isel.ChannelError
-import pt.isel.InvitationError
-import pt.isel.MessageError
-import pt.isel.UserError
+import pt.isel.*
 
 fun <T> handleChannelFailure(error: ChannelError): ResponseEntity<T> {
     val (status, message) = when (error) {
@@ -27,6 +24,7 @@ fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
         is UserError.IncorrectPassword -> HttpStatus.BAD_REQUEST to "Incorrect password."
         is UserError.EmailAlreadyExists -> HttpStatus.CONFLICT to "Email already exists."
         is UserError.PasswordsDoNotMatch -> HttpStatus.BAD_REQUEST to "Passwords do not match."
+        is UserError.UsernameAlreadyExists -> HttpStatus.CONFLICT to "Username already exists"
     }
 
     return ResponseEntity.status(status).body(message as T)
@@ -41,12 +39,24 @@ fun <T> handleMessageFailure(error: MessageError): ResponseEntity<T> {
     return ResponseEntity.status(status).body(message as T)
 }
 
-fun <T> handleInvitationFailure(error: InvitationError): ResponseEntity<T> {
+fun <T> handleChannelInvitationFailure(error: ChannelInvitationError): ResponseEntity<T> {
     val (status, message) = when (error) {
-        is InvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
-        is InvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
-        is InvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
-        is InvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
+        is ChannelInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
+        is ChannelInvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
+        is ChannelInvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
+        is ChannelInvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
+    }
+
+    return ResponseEntity.status(status).body(message as T)
+}
+
+
+fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): ResponseEntity<T> {
+    val (status, message) = when (error) {
+        is RegisterInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
+        is RegisterInvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
+        is RegisterInvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
+        is RegisterInvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
     }
 
     return ResponseEntity.status(status).body(message as T)

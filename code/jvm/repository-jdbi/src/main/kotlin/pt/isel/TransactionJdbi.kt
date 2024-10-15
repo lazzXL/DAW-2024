@@ -7,9 +7,10 @@ class TransactionJdbi(
 ) : Transaction {
     override val repoChannel = RepositoryChannelJdbi(handle)
     override val repoUser = RepositoryUserJdbi(handle)
-    override val repoParticipant = TODO("Not yet implemented")
-    override val repoMessage = TODO("Not yet implemented")
-    override val repoInvite =  TODO("Not yet implemented")
+    override val repoParticipant = RepositoryParticipantJdbi(handle)
+    override val repoMessage = RepositoryMessageJdbi(handle)
+    override val repoChannelInvitation = RepositoryChannelInvitationJdbi(handle)
+    override val repoRegisterInvitation = RepositoryRegisterInvitationJdbi(handle)
 
     override fun rollback() {
         handle.rollback()

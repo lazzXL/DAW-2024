@@ -14,7 +14,7 @@ class RepositoryChannelJdbi(
             SELECT c.* FROM dbo.channels c
             WHERE c.id = :id
             """,
-            ).bind("id", id)
+            ).bind("id", id.toInt())
             .map { rs, _ -> mapRowToChannel(rs) }
             .findOne()
             .orElse(null)
@@ -24,10 +24,8 @@ class RepositoryChannelJdbi(
             .createQuery(
                 """
                 SELECT c.* FROM dbo.channels c
-                WHERE c.visibility = :visibility
                 """,
-            ).bind("visibility", "Public")
-            .map { rs, _ -> mapRowToChannel(rs) }
+            ).map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
     override fun save(entity: Channel) {
@@ -38,10 +36,10 @@ class RepositoryChannelJdbi(
             SET name = :name, description = :description, admin_id = :admin_id, visibility = :visibility
             WHERE id = :id
             """,
-            ).bind("id", entity.id)
+            ).bind("id", entity.id.toInt())
             .bind("name", entity.name)
             .bind("description", entity.description)
-            .bind("admin_id", entity.adminID)
+            .bind("admin_id", entity.adminID.toInt())
             .bind("visibility", entity.visibility.name)
             .execute()
     }
@@ -49,7 +47,7 @@ class RepositoryChannelJdbi(
     override fun deleteById(id: UInt) {
         handle
             .createUpdate("DELETE FROM dbo.channels WHERE id = :id")
-            .bind("id", id)
+            .bind("id", id.toInt())
             .execute()
     }
 
@@ -68,13 +66,13 @@ class RepositoryChannelJdbi(
                 """,
                 ).bind("name", name)
                 .bind("description", description)
-                .bind("admin_id", adminID)
+                .bind("admin_id", adminID.toInt())
                 .bind("visibility", visibility.name)
                 .executeAndReturnGeneratedKeys()
-                .mapTo(UInt::class.java)
+                .mapTo(Int::class.java)
                 .one()
 
-        return Channel(id, name, adminID, description, visibility)
+        return Channel(id.toUInt(), name, adminID, description, visibility)
     }
 
     override fun findByName(name: String): Channel? =
@@ -101,13 +99,21 @@ class RepositoryChannelJdbi(
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
-    override fun getPublicChannels(): List<Channel> {
-        TODO("Not yet implemented")
-    }
+    override fun getPublicChannels(): List<Channel> =
+        handle
+            .createQuery(
+                """
+                SELECT c.* FROM dbo.channels c
+                WHERE c.visibility = :visibility
+                """,
+            ).bind("visibility", "PUBLIC")
+            .map { rs, _ -> mapRowToChannel(rs) }
+            .list()
 
-    /*override fun clear() {
+
+    override fun clear() {
         handle.createUpdate("DELETE FROM dbo.channels").execute()
-    }*/
+    }
 
     // TODO: OTHER POSSIBLE FUTURE IMPLEMENTATIONS: findAllChannelsByAdmin and findPublicChannel(s)ByName
 
@@ -119,7 +125,7 @@ class RepositoryChannelJdbi(
             id = rs.getInt("id").toUInt(),
             name = rs.getString("name"),
             description = rs.getString("description"),
-            adminID = rs.getInt("admin").toUInt(),
+            adminID = rs.getInt("admin_id").toUInt(),
             visibility = Visibility.valueOf(rs.getString("visibility")),
         )
     }

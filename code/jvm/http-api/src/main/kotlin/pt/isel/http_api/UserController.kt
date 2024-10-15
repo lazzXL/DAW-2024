@@ -22,9 +22,8 @@ class UserController(
 
     @PostMapping("/login")
     fun login(@RequestBody userInput: LoginInput): ResponseEntity<UUID> {
-        val email = Email(userInput.email)
         val result: Either<UserError, UUID> = userService.login(
-            email,
+            userInput.name,
             userInput.password
         )
 
@@ -38,8 +37,8 @@ class UserController(
     fun register(@RequestBody registrationInput: RegistrationInput): ResponseEntity<User> {
         val email = Email(registrationInput.email)
         val result: Either<UserError, User> = userService.registration(
-            registrationInput.name,
             email,
+            registrationInput.name,
             registrationInput.password
         )
 

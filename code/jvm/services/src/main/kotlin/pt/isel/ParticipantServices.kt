@@ -25,7 +25,7 @@ class ParticipantServices (
     ): Either<ChannelError, Participant> = trxManager.run {
         val user = repoUser.findById(userID)
             ?: return@run failure(ChannelError.UserNotFound)
-        val invite = repoInvite.findByCode(code)
+        val invite = repoChannelInvitation.findByCode(code)
             ?: return@run failure(ChannelError.InvalidInvite)
         val channel = invite.channel
         success(repoParticipant.createParticipant(user, channel, invite.permission))

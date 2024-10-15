@@ -11,7 +11,7 @@ class RepositoryUserJdbi(
     override fun findById(id: UInt): User? =
         handle
             .createQuery("SELECT * FROM dbo.users WHERE id = :id")
-            .bind("id", id)
+            .bind("id", id.toInt())
             .map { rs, _ -> mapRowToUser(rs) }
             .findOne()
             .orElse(null)
@@ -33,21 +33,21 @@ class RepositoryUserJdbi(
             ).bind("name", entity.name)
             .bind("email", entity.email.toString())
             .bind("token", entity.token.toString())
-            .bind("password", entity.token.toString())
-            .bind("id", entity.id)
+            .bind("password", entity.password)
+            .bind("id", entity.id.toInt())
             .execute()
     }
 
     override fun deleteById(id: UInt) {
         handle
             .createUpdate("DELETE FROM dbo.users WHERE id = :id")
-            .bind("id", id)
+            .bind("id", id.toInt())
             .execute()
     }
 
-    /*override fun clear() {
+    override fun clear() {
         handle.createUpdate("DELETE FROM dbo.users").execute()
-    }*/
+    }
 
     override fun createUser(
         name: String,
@@ -68,10 +68,10 @@ class RepositoryUserJdbi(
                 .bind("token", token.toString())
                 .bind("password", password)
                 .executeAndReturnGeneratedKeys()
-                .mapTo(UInt::class.java)
+                .mapTo(Int::class.java)
                 .one()
 
-        return User(id, token, name, email, password)
+        return User(id.toUInt(), token, name, email, password)
     }
 
     override fun findByEmail(email: Email): User? =
@@ -81,6 +81,15 @@ class RepositoryUserJdbi(
             .map { rs, _ -> mapRowToUser(rs) }
             .findOne()
             .orElse(null)
+
+    override fun findByName(name: String): User? =
+        handle
+            .createQuery("SELECT * FROM dbo.users WHERE name = :name")
+            .bind("name", name)
+            .map { rs, _ -> mapRowToUser(rs) }
+            .findOne()
+            .orElse(null)
+
 
     private fun mapRowToUser(rs: ResultSet): User {
         return User(

@@ -52,7 +52,7 @@ class ChannelController(
     @PostMapping("/create")
     fun createChannel(@RequestBody createInput : CreateChannelInput): ResponseEntity<Any> {
         val visibility = if (createInput.isPublic) Visibility.PUBLIC else Visibility.PRIVATE
-        val result: Either<ChannelError, Channel> = channelServices.createChannel(createInput.name, createInput.description, createInput.adminId, visibility)
+        val result: Either<ChannelError, Channel> = channelServices.createChannel(createInput.name, createInput.description, createInput.adminId.toUInt(), visibility)
 
         return when (result) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)

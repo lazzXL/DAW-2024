@@ -7,4 +7,5 @@ interface Repository<T> {
     fun findAll(): List<T>
     fun save(entity: T)
     fun deleteById(id: UInt)
+    fun clear()
 }

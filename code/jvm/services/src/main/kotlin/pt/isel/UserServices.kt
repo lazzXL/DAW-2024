@@ -10,6 +10,7 @@ sealed class UserError {
     data object IncorrectPassword : UserError()
     data object EmailAlreadyExists: UserError()
     data object PasswordsDoNotMatch: UserError()
+    data object UsernameAlreadyExists: UserError()
 
 }
 
@@ -19,10 +20,10 @@ class UserServices(
 ){
     //login
     fun login(
-        email : Email,
+        name : String,
         password: String
     ) : Either<UserError, UUID> = trxManager.run {
-        val user = repoUser.findByEmail(email) ?: return@run failure(UserError.EmailNotFound)
+        val user = repoUser.findByName(name) ?: return@run failure(UserError.UserNotFound)
         //check if passwords correspond
         if (password != user.password)
             return@run failure(UserError.IncorrectPassword)
@@ -31,13 +32,14 @@ class UserServices(
 
     //registration
     fun registration(
-        name: String,
         email : Email,
+        name: String,
         password: String,
     ) : Either<UserError, User> = trxManager.run {
-        //checks if email does not exist
         if (repoUser.findByEmail(email) != null)
             return@run failure(UserError.EmailAlreadyExists)
+        if (repoUser.findByName(name) != null)
+            return@run failure(UserError.UsernameAlreadyExists)
         val token = UUID.randomUUID()
         val user = repoUser.createUser(name, email, token, password)
 
@@ -74,6 +76,8 @@ class UserServices(
         newUsername : String
     ) : Either<UserError, User> = trxManager.run {
         val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
+        if (repoUser.findByName(newUsername) != null)
+            return@run failure(UserError.UsernameAlreadyExists)
         val updatedUser = user.copy(name = newUsername)
         repoUser.save(updatedUser)
         success(updatedUser)
