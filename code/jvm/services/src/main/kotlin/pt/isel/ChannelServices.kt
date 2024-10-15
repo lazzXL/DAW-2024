@@ -18,6 +18,7 @@ sealed class ChannelError {
 class ChannelServices(
     private val trxManager: TransactionManager
 ) {
+    private val adminPermission = Permission.READ_WRITE
 
     fun createChannel(
         name: String,
@@ -28,10 +29,11 @@ class ChannelServices(
         // Check if channel name is unique
         if (repoChannel.findByName(name) != null) return@run failure(ChannelError.ChannelNameAlreadyExists)
         // Check if admin exists
-        repoUser.findById(adminId)
-            ?: return@run failure(ChannelError.AdminNotFound)
+        val userAdmin = repoUser.findById(adminId)
+                ?: return@run failure(ChannelError.AdminNotFound)
         // Create channel
         val channel = repoChannel.createChannel(name, description, adminId, visibility)
+        repoParticipant.createParticipant(userAdmin,channel, adminPermission)
         success(channel)
     }
 

@@ -61,3 +61,14 @@ fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): Respons
 
     return ResponseEntity.status(status).body(message as T)
 }
+fun <T> handleParticipantFailure(error: ParticipantError): ResponseEntity<T> {
+    val (status, message) = when (error) {
+        is ParticipantError.ParticipantNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
+        is ParticipantError.ChannelNotPublic -> HttpStatus.FORBIDDEN to "Channel not public."
+        is ParticipantError.UserNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
+        is ParticipantError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found"
+        is ParticipantError.InvalidInvite -> HttpStatus.NOT_FOUND to "Invalid Invitation"
+    }
+
+    return ResponseEntity.status(status).body(message as T)
+}

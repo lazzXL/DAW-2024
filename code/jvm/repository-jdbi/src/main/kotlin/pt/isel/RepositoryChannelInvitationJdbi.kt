@@ -30,7 +30,7 @@ class RepositoryChannelInvitationJdbi(
                 VALUES (:code, :channel_id, :permission)
                 """,
                 ).bind("code", code.toString())
-                .bind("channel_id", channel.id)
+                .bind("channel_id", channel.id.toInt())
                 .bind("permission", permission.name)
                 .executeAndReturnGeneratedKeys()
                 .mapTo(Int::class.java)
@@ -42,7 +42,7 @@ class RepositoryChannelInvitationJdbi(
     override fun deleteById(id: UInt) {
         handle
             .createUpdate("DELETE FROM dbo.channel_invitations WHERE id = :id")
-            .bind("id", id)
+            .bind("id", id.toInt())
             .execute()
     }
 
@@ -50,16 +50,37 @@ class RepositoryChannelInvitationJdbi(
         handle.createUpdate("DELETE FROM dbo.channel_invitations").execute()
     }
 
-    override fun findById(id: UInt): ChannelInvitation? {
-        TODO("Not yet implemented")
-    }
+    override fun findById(id: UInt): ChannelInvitation? =
+        handle
+            .createQuery(
+                """SELECT * FROM dbo.channel_invitations 
+                    JOIN dbo.channels c ON i.channel_id = c.id 
+                    WHERE id = :id""")
+            .bind("id", id.toInt())
+            .map { rs, _ -> mapRowToInvitation(rs) }
+            .findOne()
+            .orElse(null)
 
-    override fun findAll(): List<ChannelInvitation> {
-        TODO("Not yet implemented")
-    }
+
+    override fun findAll(): List<ChannelInvitation> =
+        handle
+            .createQuery("SELECT * FROM dbo.channel_invitations")
+            .map { rs, _ -> mapRowToInvitation(rs) }
+            .list()
 
     override fun save(entity: ChannelInvitation) {
-        TODO("Not yet implemented")
+        handle
+            .createUpdate(
+                """
+                UPDATE dbo.channel_invitations
+                SET code = :code, channel_id = :channel_id, permission = :permission
+                WHERE id = :id
+                """,
+            ).bind("id", entity.id.toInt())
+            .bind("code", entity.code.toString())
+            .bind("channel_id", entity.channel.id.toInt())
+            .bind("permission", entity.permission.name)
+            .execute()
     }
 
     private fun mapRowToInvitation(rs: ResultSet): ChannelInvitation {

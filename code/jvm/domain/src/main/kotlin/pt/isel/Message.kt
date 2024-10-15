@@ -17,7 +17,7 @@ data class Message (
     val id : UInt,
     val content : String,
     val date : LocalDateTime,
-    val sender  : Participant
+    val sender  : UInt
 ){
     init {
         require(content.length < MAX_MESSAGE_LENGTH)

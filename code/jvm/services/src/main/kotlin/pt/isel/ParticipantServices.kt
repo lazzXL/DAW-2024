@@ -11,6 +11,8 @@ sealed class ParticipantError{
     data object UserNotFound: ParticipantError()
 
     data object ChannelNotFound: ParticipantError()
+
+    data object InvalidInvite: ParticipantError()
 }
 
 @Named
@@ -22,11 +24,11 @@ class ParticipantServices (
     fun joinChannelByInvite(
         userID: UInt,
         code: UUID
-    ): Either<ChannelError, Participant> = trxManager.run {
+    ): Either<ParticipantError, Participant> = trxManager.run {
         val user = repoUser.findById(userID)
-            ?: return@run failure(ChannelError.UserNotFound)
+            ?: return@run failure(ParticipantError.UserNotFound)
         val invite = repoChannelInvitation.findByCode(code)
-            ?: return@run failure(ChannelError.InvalidInvite)
+            ?: return@run failure(ParticipantError.InvalidInvite)
         val channel = invite.channel
         success(repoParticipant.createParticipant(user, channel, invite.permission))
     }
