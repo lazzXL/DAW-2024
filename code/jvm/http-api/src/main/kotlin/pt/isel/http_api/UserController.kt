@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.*
 import pt.isel.http_api.model.LoginInput
+import pt.isel.http_api.model.LoginOutput
 import pt.isel.http_api.model.RegistrationInput
 import pt.isel.http_api.model.handleUserFailure
 
@@ -20,13 +21,14 @@ class UserController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody userInput: LoginInput): ResponseEntity<TokenExternalInfo> {
+    fun login(@RequestBody userInput: LoginInput): ResponseEntity<LoginOutput> {
         val result: Either<UserError, TokenExternalInfo> = userService.login(
             userInput.name,
             userInput.password
         )
+
         return when (result) {
-            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
+            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(LoginOutput(result.value.tokenValue))
             is Failure -> handleUserFailure(result.value)
 
         }
@@ -37,7 +39,7 @@ class UserController(
         val result: Either<UserError, User> = userService.registration(
             email,
             registrationInput.name,
-            PasswordValidationInfo(registrationInput.password)
+            registrationInput.password
         )
 
         return when (result) {
