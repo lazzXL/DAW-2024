@@ -95,7 +95,7 @@ class RepositoryChannelJdbi(
                     JOIN dbo.participants p ON c.id = p.channel_id
                     WHERE p.user_id = :user_id
                     """,
-            ).bind("user_id", userID)
+            ).bind("user_id", userID.toInt())
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 

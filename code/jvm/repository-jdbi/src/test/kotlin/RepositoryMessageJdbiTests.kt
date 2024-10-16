@@ -10,15 +10,17 @@ import kotlin.test.assertNotNull
 class RepositoryMessageJdbiTests : RepositoryJdbiTests() {
 
     private var participantId : UInt = 0u
+    private lateinit var channel: Channel
 
     @BeforeEach
     fun createChannelAndParticipant() {
         runWithHandle { handle: Handle ->
             val user = RepositoryUserJdbi(handle).createUser("Alice",Email("alice99@email.com"),PasswordValidationInfo(newTokenValidationData()))
             val user2 = RepositoryUserJdbi(handle).createUser("Charles",Email("charles99@email.com"),PasswordValidationInfo(newTokenValidationData()))
-            val channel = RepositoryChannelJdbi(handle).createChannel("Channel 1", "Channel 1 description", user.id, Visibility.PUBLIC)
+            channel = RepositoryChannelJdbi(handle).createChannel("Channel 1", "Channel 1 description", user.id, Visibility.PUBLIC)
             val participant  = RepositoryParticipantJdbi(handle).createParticipant(user2,channel,Permission.READ_WRITE)
             participantId = participant.id
+
         }
     }
 
@@ -80,6 +82,26 @@ class RepositoryMessageJdbiTests : RepositoryJdbiTests() {
             repoMessages.deleteById(messageCreated.id)
             val messagesAfterDelete = repoMessages.findAll()
             assertEquals(0, messagesAfterDelete.size)
+        }
+
+    @Test
+    fun `test get last messages from channel`() =
+        runWithHandle { handle ->
+            val repoMessages = RepositoryMessageJdbi(handle)
+
+            repeat(10){
+                repoMessages.sendMessage(
+                    "Hello!",
+                    LocalDateTime.now().withNano((LocalDateTime.now().nano / 1000) * 1000),
+                    participantId
+                )
+            }
+
+            val messages = repoMessages.getMessages(channel,5u)
+            assertEquals(5, messages.size)
+
+            val messages2 = repoMessages.getMessages(channel,12u)
+            assertEquals(10, messages2.size)
         }
 
 }

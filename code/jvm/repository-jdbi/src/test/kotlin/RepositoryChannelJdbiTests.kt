@@ -3,7 +3,6 @@ package pt.isel
 import org.jdbi.v3.core.Handle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -174,6 +173,56 @@ class RepositoryChannelJdbiTests : RepositoryJdbiTests() {
             repeat(numOfPublicChannelsCreated) {idx ->
                 assertTrue(publicChannels.any{ it.name == (channelName + idx.toString() + "Public")})
             }
+        }
+
+    @Test
+    fun `test find all channels by user`() =
+        runWithHandle { handle ->
+            val repoUsers = RepositoryUserJdbi(handle)
+            val repoChannels = RepositoryChannelJdbi(handle)
+            val repoParticipants = RepositoryParticipantJdbi(handle)
+
+            val charles = repoUsers.createUser(
+                "Charles",
+                Email("charles99@example.com"),
+                PasswordValidationInfo(newTokenValidationData())
+            )
+
+
+            val channel1 = repoChannels.createChannel("Channel 1", "Description for channel 1", channelAdminUserId, Visibility.PUBLIC)
+            val channel2 = repoChannels.createChannel("Channel 2", "Description for channel 2", channelAdminUserId, Visibility.PRIVATE)
+            repoChannels.createChannel("Channel 3", "Description for channel 3", channelAdminUserId, Visibility.PUBLIC)
+
+
+            repoParticipants.createParticipant(charles,channel1, Permission.READ_WRITE)
+            repoParticipants.createParticipant(charles,channel2, Permission.READ_ONLY)
+
+            val charlesChannels = repoChannels.findAllByUser(charles.id)
+
+            assertEquals(2, charlesChannels.size)
+            assertTrue(charlesChannels.any { it.name == "Channel 1" })
+            assertTrue(charlesChannels.any { it.name == "Channel 2" })
+            assertTrue(charlesChannels.none { it.name == "Channel 3" })
+        }
+
+    @Test
+    fun `test find channels by user with no associations`() =
+        runWithHandle { handle ->
+            val repoUsers = RepositoryUserJdbi(handle)
+            val repoChannels = RepositoryChannelJdbi(handle)
+
+            val charles = repoUsers.createUser(
+                "Charles",
+                Email("charles@example.com"),
+                PasswordValidationInfo(newTokenValidationData())
+            )
+
+            repoChannels.createChannel("Channel 1", "Description for channel 1", channelAdminUserId, Visibility.PUBLIC)
+            repoChannels.createChannel("Channel 2", "Description for channel 2", channelAdminUserId, Visibility.PRIVATE)
+
+            val userChannels = repoChannels.findAllByUser(charles.id)
+
+            assertTrue(userChannels.isEmpty())
         }
 
 }
