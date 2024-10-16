@@ -104,7 +104,7 @@ class RepositoryUserJdbi(
         handle
             .createQuery(
                 """
-                SELECT id, name, email, password_validation, token_validation, created_at, last_used_at
+                SELECT id, name, email, password, token_validation, created_at, last_used_at
                 FROM dbo.users u 
                 JOIN dbo.tokens t ON u.id = t.user_id
                 WHERE token_validation = :validation_information
@@ -169,17 +169,17 @@ class RepositoryUserJdbi(
         val id: Int,
         val name: String,
         val email: String,
-        val passwordValidation: PasswordValidationInfo,
-        val tokenValidation: TokenValidationInfo,
+        val password: String,
+        val tokenValidation: String,
         val createdAt: Long,
         val lastUsedAt: Long,
     ) {
         val userAndToken: Pair<User, Token>
             get() =
                 Pair(
-                    User(id.toUInt(), name, Email(email), passwordValidation),
+                    User(id.toUInt(), name, Email(email), PasswordValidationInfo(password)),
                     Token(
-                        tokenValidation,
+                        TokenValidationInfo(tokenValidation),
                         id.toUInt(),
                         Instant.fromEpochSeconds(createdAt),
                         Instant.fromEpochSeconds(lastUsedAt),
