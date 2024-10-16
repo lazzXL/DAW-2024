@@ -2,7 +2,7 @@ package pt.isel
 
 import jakarta.inject.Named
 import kotlinx.datetime.Clock
-import java.util.*
+import kotlinx.datetime.Instant
 
 sealed class UserError {
 
@@ -15,19 +15,26 @@ sealed class UserError {
 
 }
 
+data class TokenExternalInfo(
+    val tokenValue: String,
+    val tokenExpiration: Instant,
+)
+
+
 @Named
 class UserServices(
     private val trxManager: TransactionManager,
-    val usersDomain: UsersDomain,
+    private val usersDomain: UsersDomain,
     private val clock: Clock
 ){
     //login
     fun login(
         name : String,
         password: String
-    ) : Either<UserError, Token> = trxManager.run {
+    ) : Either<UserError, TokenExternalInfo> = trxManager.run {
         val user = repoUser.findByName(name) ?: return@run failure(UserError.UserNotFound)
-        if (!usersDomain.validatePassword(password, user.password))
+        val passwordValidationInfo = PasswordValidationInfo(password)
+        if (!usersDomain.validatePassword(password,passwordValidationInfo))
             return@run failure(UserError.IncorrectPassword)
         val tokenValue = usersDomain.generateTokenValue()
         val now = clock.now()
@@ -38,8 +45,13 @@ class UserServices(
                 createdAt = now,
                 lastUsedAt = now,
             )
-        repoUser.createToken(newToken)
-        success(newToken)
+        repoUser.createToken(newToken, usersDomain.maxNumberOfTokensPerUser)
+        Either.Right(
+            TokenExternalInfo(
+                tokenValue,
+                usersDomain.getTokenExpiration(newToken),
+            )
+        )
     }
 
     //registration
@@ -52,8 +64,7 @@ class UserServices(
             return@run failure(UserError.EmailAlreadyExists)
         if (repoUser.findByName(name) != null)
             return@run failure(UserError.UsernameAlreadyExists)
-        val token = UUID.randomUUID()
-        val user = repoUser.createUser(name, email, token, password)
+        val user = repoUser.createUser(name, email, password)
 
         success(user)
     }
