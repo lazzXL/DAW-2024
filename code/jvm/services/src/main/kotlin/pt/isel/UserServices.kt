@@ -120,4 +120,9 @@ class UserServices(
         val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
         success(user)
     }
+
+    fun getUserByToken(token: String): Either<UserError, User> = trxManager.run {
+        val user = repoUser.findByToken(token) ?: return@run failure(UserError.UserNotFound)
+        success(user)
+    }
 }
