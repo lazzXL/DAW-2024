@@ -25,6 +25,7 @@ fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
         is UserError.EmailAlreadyExists -> HttpStatus.CONFLICT to "Email already exists."
         is UserError.PasswordsDoNotMatch -> HttpStatus.BAD_REQUEST to "Passwords do not match."
         is UserError.UsernameAlreadyExists -> HttpStatus.CONFLICT to "Username already exists"
+        is UserError.InsecurePassword -> HttpStatus.BAD_REQUEST to "Password is not secure (Must contain upper and lower case and a number)"
     }
 
     return ResponseEntity.status(status).body(message as T)

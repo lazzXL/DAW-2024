@@ -12,6 +12,7 @@ sealed class UserError {
     data object EmailAlreadyExists: UserError()
     data object PasswordsDoNotMatch: UserError()
     data object UsernameAlreadyExists: UserError()
+    data object InsecurePassword: UserError()
 
 }
 
@@ -33,8 +34,7 @@ class UserServices(
         password: String
     ) : Either<UserError, TokenExternalInfo> = trxManager.run {
         val user = repoUser.findByName(name) ?: return@run failure(UserError.UserNotFound)
-        val passwordValidationInfo = PasswordValidationInfo(password)
-        if (!usersDomain.validatePassword(password,passwordValidationInfo))
+        if (!usersDomain.validatePassword(password,user.password))
             return@run failure(UserError.IncorrectPassword)
         val tokenValue = usersDomain.generateTokenValue()
         val now = clock.now()
@@ -53,21 +53,26 @@ class UserServices(
             )
         )
     }
-
     //registration
     fun registration(
         email : Email,
         name: String,
-        password: PasswordValidationInfo,
-    ) : Either<UserError, User> = trxManager.run {
-        if (repoUser.findByEmail(email) != null)
-            return@run failure(UserError.EmailAlreadyExists)
-        if (repoUser.findByName(name) != null)
-            return@run failure(UserError.UsernameAlreadyExists)
-        val user = repoUser.createUser(name, email, password)
-
-        success(user)
+        password: String,
+    ) : Either<UserError, User> {
+        if (!usersDomain.isSafePassword(password)) {
+            return failure(UserError.InsecurePassword)
+        }
+        val passwordValidationInfo = usersDomain.createPasswordValidationInformation(password)
+        return trxManager.run {
+            if (repoUser.findByEmail(email) != null)
+                return@run failure(UserError.EmailAlreadyExists)
+            if (repoUser.findByName(name) != null)
+                return@run failure(UserError.UsernameAlreadyExists)
+            val user = repoUser.createUser(name, email, passwordValidationInfo)
+            success(user)
+        }
     }
+
     /*
     //change password
     fun changePassword(

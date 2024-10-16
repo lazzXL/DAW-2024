@@ -19,7 +19,7 @@ class MessageServices(
         participant: UInt
     ): Either<MessageError, Message> = trxManager.run {
         val messageParticipant = repoParticipant.findById(participant) ?: return@run failure(MessageError.ParticipantNotFound)
-        success(repoMessage.sendMessage(content, date, messageParticipant))
+        success(repoMessage.sendMessage(content, date, messageParticipant.id))
     }
 
     fun getMessages(

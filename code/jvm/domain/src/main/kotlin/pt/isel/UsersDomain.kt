@@ -3,7 +3,6 @@ package pt.isel
 import jakarta.inject.Named
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import org.springframework.security.crypto.password.PasswordEncoder
 import java.security.SecureRandom
 import java.util.Base64.getUrlDecoder
 import java.util.Base64.getUrlEncoder

@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     implementation(project(":http-api"))
+    implementation(project(":domain"))
     implementation(project(":repository-jdbi"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -26,6 +27,8 @@ dependencies {
     // for JDBI and Postgres
     implementation("org.jdbi:jdbi3-core:3.37.1")
     implementation("org.postgresql:postgresql:42.7.2")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 
     testImplementation(kotlin("test"))
 
