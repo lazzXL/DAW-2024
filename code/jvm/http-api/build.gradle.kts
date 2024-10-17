@@ -27,8 +27,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")*/
-
+	testImplementation(project(":repository-jdbi"))
+	testImplementation("org.jdbi:jdbi3-core:3.37.1")
+	testImplementation("org.postgresql:postgresql:42.7.2")
 	testImplementation(kotlin("test"))
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+	testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+	testImplementation(project(mapOf("path" to ":host")))
 }
 
 kotlin {

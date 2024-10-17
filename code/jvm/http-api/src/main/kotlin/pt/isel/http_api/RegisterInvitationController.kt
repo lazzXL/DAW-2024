@@ -17,7 +17,7 @@ class RegisterInvitationController (
     private val invitationService: RegisterInvitationServices
 ) {
     @PostMapping("/create")
-    fun createInvitation(@RequestBody invitationInput: CreateInvitationInput): ResponseEntity<RegisterInvitation> {
+    fun createInvitation(): ResponseEntity<RegisterInvitation> {
         return when (val result: Either<RegisterInvitationError, RegisterInvitation> = invitationService.createInvitation( UUID.randomUUID())) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleRegisterInvitationFailure(result.value)
