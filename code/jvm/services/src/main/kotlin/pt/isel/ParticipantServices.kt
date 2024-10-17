@@ -13,6 +13,8 @@ sealed class ParticipantError{
     data object ChannelNotFound: ParticipantError()
 
     data object InvalidInvite: ParticipantError()
+
+    data object UserAlreadyInChannel: ParticipantError()
 }
 
 @Named
@@ -22,33 +24,37 @@ class ParticipantServices (
     private val defaultPublicPermission = Permission.READ_ONLY
 
     fun joinChannelByInvite(
-        userID: UInt,
+        user: User,
         code: UUID
     ): Either<ParticipantError, Participant> = trxManager.run {
-        val user = repoUser.findById(userID)
-            ?: return@run failure(ParticipantError.UserNotFound)
         val invite = repoChannelInvitation.findByCode(code)
             ?: return@run failure(ParticipantError.InvalidInvite)
         val channel = invite.channel
-        success(repoParticipant.createParticipant(user, channel, invite.permission))
+        if(repoParticipant.isParticipant(channel.id,user.id) != null)
+            return@run failure(ParticipantError.UserAlreadyInChannel)
+        val participant = repoParticipant.createParticipant(user, channel, invite.permission)
+        repoChannelInvitation.deleteById(invite.id)
+        success(participant)
     }
 
     fun joinPublicChannel(
-        userID: UInt,
+        user: User,
         channelID: UInt
     ): Either<ParticipantError, Participant> = trxManager.run {
-        val user = repoUser.findById(userID)
-            ?: return@run failure(ParticipantError.UserNotFound)
         val channel = repoChannel.findById(channelID)
             ?: return@run failure(ParticipantError.ChannelNotFound)
         if (channel.visibility == Visibility.PRIVATE) return@run failure(ParticipantError.ChannelNotPublic)
+        if(repoParticipant.isParticipant(channel.id,user.id) != null)
+            return@run failure(ParticipantError.UserAlreadyInChannel)
         success(repoParticipant.createParticipant(user, channel, defaultPublicPermission))
     }
 
     fun leaveChannel(
-        participantID: UInt
+        channelId: UInt,
+        userId: UInt,
     ): Either<ParticipantError, Unit> = trxManager.run {
-        repoParticipant.findById(participantID) ?: return@run failure(ParticipantError.ParticipantNotFound)
-        success(repoParticipant.deleteById(participantID))
+        val participant = repoParticipant.isParticipant(channelId,userId)
+            ?: return@run failure(ParticipantError.ParticipantNotFound)
+        success(repoParticipant.deleteById(participant.id))
     }
 }

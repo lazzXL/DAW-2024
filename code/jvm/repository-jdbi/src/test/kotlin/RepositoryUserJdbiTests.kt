@@ -240,35 +240,4 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
             assertNull(tokenAfterDelete)
         }
 
-    @Test
-    fun `test find user by token`() =
-        runWithHandle { handle ->
-            val repoUsers = RepositoryUserJdbi(handle)
-
-            val alice = repoUsers.createUser(
-                "Alice",
-                Email("alice99@example.com"),
-                PasswordValidationInfo(newTokenValidationData())
-            )
-
-            val tokenInfo = TokenValidationInfo(newTokenValidationData())
-            val token = Token(tokenInfo, alice.id, Clock.System.now(), Clock.System.now())
-            repoUsers.createToken(token, maxTokens = 5)
-
-            val userByToken = repoUsers.findByToken(tokenInfo.validationInfo)
-
-            assertNotNull(userByToken)
-            assertEquals(alice, userByToken)
-        }
-
-    @Test
-    fun `test find user by invalid token returns null`() =
-        runWithHandle { handle ->
-            val repoUsers = RepositoryUserJdbi(handle)
-
-            val invalidToken = "non_existing_token"
-            val userByToken = repoUsers.findByToken(invalidToken)
-
-            assertNull(userByToken)
-        }
 }

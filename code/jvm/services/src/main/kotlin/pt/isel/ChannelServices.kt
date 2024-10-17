@@ -23,40 +23,36 @@ class ChannelServices(
     fun createChannel(
         name: String,
         description: String,
-        adminId: UInt,
+        admin: User,
         visibility: Visibility
     ): Either<ChannelError, Channel> = trxManager.run {
-        // Check if channel name is unique
         if (repoChannel.findByName(name) != null) return@run failure(ChannelError.ChannelNameAlreadyExists)
-        // Check if admin exists
-        val userAdmin = repoUser.findById(adminId)
-                ?: return@run failure(ChannelError.AdminNotFound)
-        // Create channel
-        val channel = repoChannel.createChannel(name, description, adminId, visibility)
-        repoParticipant.createParticipant(userAdmin,channel, adminPermission)
+        val channel = repoChannel.createChannel(name, description, admin.id, visibility)
+        repoParticipant.createParticipant(admin,channel, adminPermission)
         success(channel)
     }
 
     fun getChannel(
-        channelId: UInt
+        channelId: UInt,
+        userID: UInt
     ): Either<ChannelError, Channel> = trxManager.run {
-        repoChannel
-            .findById(channelId)
-            ?.let { success(it) }
-            ?: failure(ChannelError.ChannelNotFound)
+        val channel = repoChannel.findById(channelId) ?: return@run failure(ChannelError.ChannelNotFound)
+        if(channel.visibility == Visibility.PRIVATE && repoParticipant.isParticipant(channelId,userID) == null){
+            return@run failure(ChannelError.ChannelNotPublic)
+        }
+        success(channel)
     }
 
     fun getJoinedChannels(
-        userID : UInt
+        userID : UInt,
+        name : String?
     ): Either<ChannelError, List<Channel>> = trxManager.run {
-        repoUser.findById(userID)
-            ?: return@run failure(ChannelError.UserNotFound)
-        success(repoChannel.findAllByUser(userID))
+        success(repoChannel.findAllByUser(userID,name))
     }
 
 
-    fun getPublicChannels(): Either<ChannelError,List<Channel>> = trxManager.run {
-        success(repoChannel.getPublicChannels())
+    fun getPublicChannels(name:String?): Either<ChannelError,List<Channel>> = trxManager.run {
+        success(repoChannel.getPublicChannels(name))
     }
 
 

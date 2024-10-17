@@ -15,11 +15,11 @@ class MessageServices(
 ) {
     fun sendMessage(
         content: String,
-        date: LocalDateTime,
+        //date: LocalDateTime,
         participant: UInt
     ): Either<MessageError, Message> = trxManager.run {
         val messageParticipant = repoParticipant.findById(participant) ?: return@run failure(MessageError.ParticipantNotFound)
-        success(repoMessage.sendMessage(content, date, messageParticipant.id))
+        success(repoMessage.sendMessage(content, LocalDateTime.now(), messageParticipant.id))
     }
 
     fun getMessages(

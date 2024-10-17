@@ -101,19 +101,6 @@ class RepositoryUserJdbi(
             .execute()
     }
 
-    override fun findByToken(token: String): User? {
-        return handle
-            .createQuery(
-                """
-                SELECT * FROM dbo.users u 
-                JOIN dbo.tokens t ON u.id = t.user_id
-                WHERE token_validation = :token
-                """,
-            ).bind("token", token)
-            .map { rs, _ -> mapRowToUser(rs) }
-            .findOne()
-            .orElse(null)
-    }
 
     override fun getTokenByTokenValidationInfo(tokenValidationInfo: TokenValidationInfo): Pair<User, Token>? =
         handle

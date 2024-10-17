@@ -3,6 +3,7 @@ package pt.isel
 import jakarta.inject.Named
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import java.util.UUID
 
 sealed class UserError {
 
@@ -13,6 +14,7 @@ sealed class UserError {
     data object PasswordsDoNotMatch: UserError()
     data object UsernameAlreadyExists: UserError()
     data object InsecurePassword: UserError()
+    data object InvitatioDoesNotExist: UserError()
 
 }
 
@@ -55,6 +57,7 @@ class UserServices(
     }
     //registration
     fun registration(
+        code: UUID,
         email : Email,
         name: String,
         password: String,
@@ -64,11 +67,14 @@ class UserServices(
         }
         val passwordValidationInfo = usersDomain.createPasswordValidationInformation(password)
         return trxManager.run {
+            val invite = repoRegisterInvitation.findByCode(code)
+                ?: return@run failure(UserError.InvitatioDoesNotExist)
             if (repoUser.findByEmail(email) != null)
                 return@run failure(UserError.EmailAlreadyExists)
             if (repoUser.findByName(name) != null)
                 return@run failure(UserError.UsernameAlreadyExists)
             val user = repoUser.createUser(name, email, passwordValidationInfo)
+            repoRegisterInvitation.deleteById(invite.id)
             success(user)
         }
     }
@@ -122,7 +128,16 @@ class UserServices(
     }
 
     fun getUserByToken(token: String): Either<UserError, User> = trxManager.run {
-        val user = repoUser.findByToken(token) ?: return@run failure(UserError.UserNotFound)
-        success(user)
+        if (!usersDomain.canBeToken(token)) {
+            return@run failure(UserError.EmailAlreadyExists)
+        }
+        val tokenValidationInfo = usersDomain.createTokenValidationInformation(token)
+        val userAndToken: Pair<User, Token>? = repoUser.getTokenByTokenValidationInfo(tokenValidationInfo)
+        if (userAndToken != null && usersDomain.isTokenTimeValid(clock, userAndToken.second)) {
+            repoUser.updateTokenLastUsed(userAndToken.second, clock.now())
+            success(userAndToken.first)
+        } else {
+            failure(UserError.UserNotFound)
+        }
     }
 }

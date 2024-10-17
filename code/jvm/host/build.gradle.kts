@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":http-api"))
     implementation(project(":domain"))
     implementation(project(":repository-jdbi"))
+    implementation(project(":http-pipeline"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

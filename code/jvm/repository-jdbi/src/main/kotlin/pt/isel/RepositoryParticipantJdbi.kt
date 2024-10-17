@@ -29,7 +29,7 @@ class RepositoryParticipantJdbi(
         return Participant(id.toUInt(), user, channel, permission )
     }
 
-    override fun isParticipant(channelId: UInt, userId: UInt): Boolean =
+    override fun isParticipant(channelId: UInt, userId: UInt): Participant? =
         handle
             .createQuery(
                 """
@@ -45,7 +45,7 @@ class RepositoryParticipantJdbi(
             .bind("userId", userId.toInt())
             .map { rs, _ -> mapRowToParticipant(rs) }
             .findOne()
-            .isPresent
+            .orElse(null)
 
 
     override fun findById(id: UInt): Participant? {

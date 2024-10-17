@@ -4,5 +4,4 @@ import java.util.*
 
 data class JoinChannelViaInviteInput(
     val code: UUID,
-    val userId: UInt
 )

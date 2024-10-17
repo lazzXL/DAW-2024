@@ -35,9 +35,9 @@ class UserController(
     }
     @PostMapping("/register")
     fun register(@RequestBody registrationInput: RegistrationInput): ResponseEntity<User> {
-        val email = Email(registrationInput.email)
         val result: Either<UserError, User> = userService.registration(
-            email,
+            registrationInput.invitation,
+            registrationInput.email,
             registrationInput.name,
             registrationInput.password
         )

@@ -18,9 +18,10 @@ import pt.isel.http_api.model.handleMessageFailure
 class MessageController(
     private val messageService: MessageServices
 ) {
+    // TODO: WE ARE SO FINISHED! EMERGENCY MEETING!!!!
     @PostMapping("/send")
-    fun sendMessage(@RequestBody messageInput: SendMessageInput): ResponseEntity<Message> {
-        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, messageInput.date, messageInput.participantId)) {
+    fun sendMessage(@RequestBody messageInput: SendMessageInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Message> {
+        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, /*messageInput.date,*/ messageInput.participantId)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }

@@ -87,26 +87,30 @@ class RepositoryChannelJdbi(
             .findOne()
             .orElse(null)
 
-    override fun findAllByUser(userID: UInt): List<Channel> =
+    override fun findAllByUser(userID: UInt,name:String?): List<Channel> =
         handle
             .createQuery(
             """
                     SELECT c.* FROM dbo.channels c
                     JOIN dbo.participants p ON c.id = p.channel_id
                     WHERE p.user_id = :user_id
+                    AND (:name IS NULL OR c.name LIKE :name)
                     """,
             ).bind("user_id", userID.toInt())
+            .bind("name", name?.let { "%$it%" })
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
-    override fun getPublicChannels(): List<Channel> =
+    override fun getPublicChannels(name:String?): List<Channel> =
         handle
             .createQuery(
                 """
                 SELECT c.* FROM dbo.channels c
                 WHERE c.visibility = :visibility
+                AND (:name IS NULL OR c.name LIKE :name)
                 """,
             ).bind("visibility", "PUBLIC")
+            .bind("name", name?.let { "%$it%" })
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 

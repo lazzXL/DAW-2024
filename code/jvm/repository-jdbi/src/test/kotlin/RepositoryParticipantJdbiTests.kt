@@ -3,10 +3,7 @@ package pt.isel
 import org.jdbi.v3.core.Handle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class RepositoryParticipantJdbiTests : RepositoryJdbiTests() {
 
@@ -102,8 +99,8 @@ class RepositoryParticipantJdbiTests : RepositoryJdbiTests() {
                 channel,
                 participantPermission,
             )
-            assertTrue(repoParticipants.isParticipant(channel.id,user.id))
-            assertFalse(repoParticipants.isParticipant(channel.id,userNotInChannel.id))
+            assertNotNull(repoParticipants.isParticipant(channel.id,user.id))
+            assertNull(repoParticipants.isParticipant(channel.id,userNotInChannel.id))
         }
 
 }

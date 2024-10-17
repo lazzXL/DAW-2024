@@ -26,6 +26,7 @@ fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
         is UserError.PasswordsDoNotMatch -> HttpStatus.BAD_REQUEST to "Passwords do not match."
         is UserError.UsernameAlreadyExists -> HttpStatus.CONFLICT to "Username already exists"
         is UserError.InsecurePassword -> HttpStatus.BAD_REQUEST to "Password is not secure (Must contain upper and lower case and a number)"
+        is UserError.InvitatioDoesNotExist -> HttpStatus.NOT_FOUND to "Invitation not found."
     }
 
     return ResponseEntity.status(status).body(message as T)
@@ -69,6 +70,7 @@ fun <T> handleParticipantFailure(error: ParticipantError): ResponseEntity<T> {
         is ParticipantError.UserNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
         is ParticipantError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found"
         is ParticipantError.InvalidInvite -> HttpStatus.NOT_FOUND to "Invalid Invitation"
+        is ParticipantError.UserAlreadyInChannel ->  HttpStatus.CONFLICT to "User already in channel."
     }
 
     return ResponseEntity.status(status).body(message as T)

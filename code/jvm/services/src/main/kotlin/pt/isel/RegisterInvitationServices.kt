@@ -16,12 +16,7 @@ class RegisterInvitationServices(
 ) {
 
 
-    fun createInvitation(
-        token: UUID,
-    ): Either<RegisterInvitationError, RegisterInvitation> = trxManager.run {
-        /*// Chech if user exists
-        val user = repoUser.findById(userId)
-            ?: return@run failure(ChannelInvitationError.UserNotFound)*/
+    fun createInvitation(): Either<RegisterInvitationError, RegisterInvitation> = trxManager.run {
         val invitation: RegisterInvitation = repoRegisterInvitation.createInvitation(UUID.randomUUID())
         success(invitation)
     }

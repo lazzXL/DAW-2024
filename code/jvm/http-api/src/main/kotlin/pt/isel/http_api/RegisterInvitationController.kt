@@ -16,9 +16,10 @@ import java.util.*
 class RegisterInvitationController (
     private val invitationService: RegisterInvitationServices
 ) {
-    @PostMapping("/create")
-    fun createInvitation(): ResponseEntity<RegisterInvitation> {
-        return when (val result: Either<RegisterInvitationError, RegisterInvitation> = invitationService.createInvitation( UUID.randomUUID())) {
+    // TODO: DELETE INVITATION (BY ID)
+    @PostMapping("/create") // Verified
+    fun createInvitation(authenticatedUser: AuthenticatedUser): ResponseEntity<RegisterInvitation> {
+        return when (val result: Either<RegisterInvitationError, RegisterInvitation> = invitationService.createInvitation()) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleRegisterInvitationFailure(result.value)
         }
