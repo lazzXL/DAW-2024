@@ -2,12 +2,7 @@ package pt.isel.http_api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import pt.isel.*
 import pt.isel.http_api.model.SendMessageInput
 import pt.isel.http_api.model.handleMessageFailure
@@ -26,11 +21,9 @@ class MessageController(
             is Failure -> handleMessageFailure(result.value)
         }
     }
-
-    // TODO: NUM OF MESSAGES MAYBE IS BETTER AS QUERY PARAMETER INSTEAD OF PATH VARIABLE
-    @GetMapping("/{channelId}/{numOfMessages}")
-    fun getMessages(@PathVariable channelId: UInt, @PathVariable numOfMessages: UInt, authenticatedUser: AuthenticatedUser): ResponseEntity<List<Message>> {
-        return when (val result: Either<MessageError, List<Message>> = messageService.getMessages(channelId, authenticatedUser.user.id, numOfMessages)) {
+    @GetMapping("/{channelId}/")
+    fun getMessages(@PathVariable channelId: UInt, @RequestParam(required = false) limit : Int?, @RequestParam(required = false) skip : Int?, authenticatedUser: AuthenticatedUser): ResponseEntity<List<Message>> {
+        return when (val result: Either<MessageError, List<Message>> = messageService.getMessages(channelId, authenticatedUser.user.id, limit, skip)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }
