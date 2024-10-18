@@ -83,6 +83,7 @@ fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): Respons
         is RegisterInvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
         is RegisterInvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
         is RegisterInvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
+        is RegisterInvitationError.InvitationNotFound -> HttpStatus.NOT_FOUND to "Invitation not found."
     }
 
     return ResponseEntity.status(status).body(message as T)
