@@ -36,6 +36,7 @@ fun <T> handleMessageFailure(error: MessageError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is MessageError.ParticipantNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
         is MessageError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
+        is MessageError.NoWritePermission -> HttpStatus.UNAUTHORIZED to "User does not have permission to write."
     }
 
     return ResponseEntity.status(status).body(message as T)

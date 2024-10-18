@@ -18,18 +18,19 @@ import pt.isel.http_api.model.handleMessageFailure
 class MessageController(
     private val messageService: MessageServices
 ) {
-    // TODO: WE ARE SO FINISHED! EMERGENCY MEETING!!!!
+
     @PostMapping("/send")
     fun sendMessage(@RequestBody messageInput: SendMessageInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Message> {
-        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, /*messageInput.date,*/ messageInput.participantId)) {
+        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, /*messageInput.date,*/ messageInput.channelId, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }
     }
 
+    // TODO: NUM OF MESSAGES MAYBE IS BETTER AS QUERY PARAMETER INSTEAD OF PATH VARIABLE
     @GetMapping("/{channelId}/{numOfMessages}")
-    fun getMessages(@PathVariable channelId: UInt, @PathVariable numOfMessages: UInt): ResponseEntity<List<Message>> {
-        return when (val result: Either<MessageError, List<Message>> = messageService.getMessages(channelId, numOfMessages)) {
+    fun getMessages(@PathVariable channelId: UInt, @PathVariable numOfMessages: UInt, authenticatedUser: AuthenticatedUser): ResponseEntity<List<Message>> {
+        return when (val result: Either<MessageError, List<Message>> = messageService.getMessages(channelId, authenticatedUser.user.id, numOfMessages)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }
