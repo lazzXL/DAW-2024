@@ -97,10 +97,10 @@ class RepositoryMessageJdbiTests : RepositoryJdbiTests() {
                 )
             }
 
-            val messages = repoMessages.getMessages(channel,5u)
+            val messages = repoMessages.getMessages(channel,5)
             assertEquals(5, messages.size)
 
-            val messages2 = repoMessages.getMessages(channel,12u)
+            val messages2 = repoMessages.getMessages(channel,12)
             assertEquals(10, messages2.size)
         }
 

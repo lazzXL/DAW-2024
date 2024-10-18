@@ -168,7 +168,7 @@ class RepositoryChannelJdbiTests : RepositoryJdbiTests() {
             }
             val totalChannels = repoChannels.findAll()
             assertEquals(numOfPrivateChannelsCreated + numOfPublicChannelsCreated, totalChannels.size)
-            val publicChannels = repoChannels.getPublicChannels(limit = limit, skip = skip)
+            val publicChannels = repoChannels.getPublicChannels()
             assertEquals( numOfPublicChannelsCreated, publicChannels.size)
             repeat(numOfPublicChannelsCreated) {idx ->
                 assertTrue(publicChannels.any{ it.name == (channelName + idx.toString() + "Public")})

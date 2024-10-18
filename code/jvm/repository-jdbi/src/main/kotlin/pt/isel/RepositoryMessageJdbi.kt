@@ -7,6 +7,9 @@ import java.time.LocalDateTime
 class RepositoryMessageJdbi(
     private val handle: Handle,
 ) : RepositoryMessage {
+
+    val defaultSkip = 0
+    val defaultLimit = 20
     override fun sendMessage(content: String, date: LocalDateTime, participant: UInt): Message {
         val id =
             handle
@@ -33,13 +36,11 @@ class RepositoryMessageJdbi(
                 JOIN dbo.participants p ON m.sender_id = p.id
                 WHERE p.channel_id = :channel_id
                 ORDER BY m.date_sent
-                
-                ${if (limit != null) "LIMIT :limit" else "LIMIT 20"}
-                ${if (skip != null) "OFFSET :skip" else ""}
+                LIMIT :limit OFFSET :skip
                 """,
             ).bind("channel_id", channel.id.toInt())
-            .bind("limit", limit)
-            .bind("skip", skip)
+            .bind("limit", limit ?: defaultLimit)
+            .bind("skip", skip ?: defaultSkip)
             .map { rs, _ -> mapRowToMessage(rs) }
             .list()
 

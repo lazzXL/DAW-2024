@@ -7,6 +7,9 @@ class RepositoryChannelJdbi(
     private val handle: Handle,
 ) : RepositoryChannel {
 
+    private val defaultSkip = 0
+    private val defaultLimit = 20
+
     override fun findById(id: UInt): Channel? =
         handle
             .createQuery(
@@ -97,12 +100,12 @@ class RepositoryChannelJdbi(
                     JOIN dbo.participants p ON c.id = p.channel_id
                     WHERE p.user_id = :user_id
                     AND (:name IS NULL OR c.name LIKE :name)
-                    
-                    ${if (limit != null) "LIMIT :limit" else "LIMIT 20"}
-                    ${if (skip != null) "OFFSET :skip" else ""}
+                    LIMIT :limit OFFSET :skip
                     """,
             ).bind("user_id", userID.toInt())
             .bind("name", name?.let { "%$it%" })
+            .bind("limit", limit ?: defaultLimit)
+            .bind("skip", skip ?: defaultSkip)
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
@@ -113,12 +116,12 @@ class RepositoryChannelJdbi(
                 SELECT c.* FROM dbo.channels c
                 WHERE c.visibility = :visibility
                 AND (:name IS NULL OR c.name LIKE :name)
-    
-                ${if (limit != null) "LIMIT :limit" else "LIMIT 20"}
-                ${if (skip != null) "OFFSET :skip" else ""}
+                LIMIT :limit OFFSET :skip
                 """,
             ).bind("visibility", "PUBLIC")
             .bind("name", name?.let { "%$it%" })
+            .bind("limit", limit ?: defaultLimit)
+            .bind("skip", skip ?: defaultSkip)
             .map { rs, _ -> mapRowToChannel(rs) }
             .list()
 
