@@ -2,14 +2,12 @@ package pt.isel.http_api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import pt.isel.*
 import pt.isel.http_api.model.CreateInvitationInput
 import pt.isel.http_api.model.handleChannelFailure
 import pt.isel.http_api.model.handleChannelInvitationFailure
+import pt.isel.http_api.model.handleParticipantFailure
 
 
 @RestController
@@ -24,7 +22,14 @@ class ChannelInvitationController(
              is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
              is Failure -> handleChannelInvitationFailure(result.value)
          }
+    }
 
+    @DeleteMapping("/delete/{invitationId}")
+    fun leaveChannel(@PathVariable invitationId : UInt, authenticatedUser: AuthenticatedUser): ResponseEntity<Any> {
+        return when (val result: Either<ChannelInvitationError, Unit> = invitationService.deleteInvitation(invitationId,authenticatedUser.user.id)) {
+            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
+            is Failure -> handleChannelInvitationFailure(result.value)
+        }
     }
 }
 

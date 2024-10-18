@@ -47,7 +47,8 @@ fun <T> handleChannelInvitationFailure(error: ChannelInvitationError): ResponseE
         is ChannelInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
         is ChannelInvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
         is ChannelInvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
-        is ChannelInvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
+        is ChannelInvitationError.UserIsNotAdmin -> HttpStatus.FORBIDDEN to "Only admin can create invitations."
+        is ChannelInvitationError.InvitationNotFound -> HttpStatus.NOT_FOUND to "Invitation not found."
     }
 
     return ResponseEntity.status(status).body(message as T)
