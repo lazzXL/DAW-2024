@@ -25,7 +25,7 @@ class RepositoryMessageJdbi(
         return Message(id.toUInt(), content, date, participant)
     }
 
-    override fun getMessages(channel: Channel, numOfMessages: UInt): List<Message> =
+    override fun getMessages(channel: Channel, limit : Int?, skip : Int?): List<Message> =
         handle
             .createQuery(
                 """
@@ -33,10 +33,13 @@ class RepositoryMessageJdbi(
                 JOIN dbo.participants p ON m.sender_id = p.id
                 WHERE p.channel_id = :channel_id
                 ORDER BY m.date_sent
-                LIMIT :maxNumOfMessages
+                
+                ${if (limit != null) "LIMIT :limit" else "LIMIT 20"}
+                ${if (skip != null) "OFFSET :skip" else ""}
                 """,
             ).bind("channel_id", channel.id.toInt())
-            .bind("maxNumOfMessages", numOfMessages.toInt())
+            .bind("limit", limit)
+            .bind("skip", skip)
             .map { rs, _ -> mapRowToMessage(rs) }
             .list()
 

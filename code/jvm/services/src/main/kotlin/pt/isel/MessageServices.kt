@@ -28,11 +28,12 @@ class MessageServices(
     fun getMessages(
         channelID: UInt,
         userId: UInt,
-        numOfMessages: UInt
+        limit: Int?,
+        skip: Int?
     ): Either<MessageError, List<Message>> = trxManager.run {
         val channel = repoChannel.findById(channelID) ?: return@run failure(MessageError.ChannelNotFound)
         repoParticipant.isParticipant(channelID,userId) ?: return@run failure(MessageError.ParticipantNotFound)
-        success(repoMessage.getMessages(channel, numOfMessages))
+        success(repoMessage.getMessages(channel, limit, skip))
     }
 
 }

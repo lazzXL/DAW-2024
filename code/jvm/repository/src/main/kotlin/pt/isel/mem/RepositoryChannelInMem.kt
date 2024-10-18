@@ -17,7 +17,7 @@ class RepositoryChannelInMem : RepositoryChannel{
         TODO()
     }
 
-    override fun getPublicChannels(name: String?): List<Channel> =
+    override fun getPublicChannels(name: String?, limit: Int?, skip: Int?): List<Channel> =
         channels.filter { it.visibility == Visibility.PUBLIC }
 
     override fun findById(id: UInt): Channel? =

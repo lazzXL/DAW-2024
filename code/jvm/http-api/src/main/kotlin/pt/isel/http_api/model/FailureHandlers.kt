@@ -4,6 +4,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import pt.isel.*
 
+/**
+ * Handles the failure of a channel operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+ */
 fun <T> handleChannelFailure(error: ChannelError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is ChannelError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
@@ -17,6 +22,11 @@ fun <T> handleChannelFailure(error: ChannelError): ResponseEntity<T> {
     return ResponseEntity.status(status).body(message as T)
 }
 
+/**
+ * Handles the failure of a user operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+ */
 fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is UserError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
@@ -31,7 +41,11 @@ fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
 
     return ResponseEntity.status(status).body(message as T)
 }
-
+/**
+ * Handles the failure of a message operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+ */
 fun <T> handleMessageFailure(error: MessageError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is MessageError.ParticipantNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
@@ -41,7 +55,11 @@ fun <T> handleMessageFailure(error: MessageError): ResponseEntity<T> {
 
     return ResponseEntity.status(status).body(message as T)
 }
-
+/**
+ * Handles the failure of a channel invitation operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+ */
 fun <T> handleChannelInvitationFailure(error: ChannelInvitationError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is ChannelInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
@@ -54,7 +72,11 @@ fun <T> handleChannelInvitationFailure(error: ChannelInvitationError): ResponseE
     return ResponseEntity.status(status).body(message as T)
 }
 
-
+/**
+ * Handles the failure of a register invitation operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+*/
 fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is RegisterInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
@@ -65,6 +87,11 @@ fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): Respons
 
     return ResponseEntity.status(status).body(message as T)
 }
+/**
+ * Handles the failure of a participant operation.
+ * @param error the error that occurred.
+ * @return a response entity with the error message.
+ */
 fun <T> handleParticipantFailure(error: ParticipantError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is ParticipantError.ParticipantNotFound -> HttpStatus.NOT_FOUND to "Participant not found."

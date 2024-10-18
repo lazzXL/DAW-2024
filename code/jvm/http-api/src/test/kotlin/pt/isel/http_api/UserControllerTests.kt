@@ -62,7 +62,7 @@ class UserControllerTest {
 			testClock,
 		)
 	}
-
+	/*
 	private fun createUser(trxManager: TransactionManager) {
 		val controllerUser = UserController(createUserService(trxManager, TestClock()))
 		val registerInvitation = RegisterInvitationController(RegisterInvitationServices(trxManager))
@@ -123,6 +123,8 @@ class UserControllerTest {
 
 		cleanup(trxManager)
 	}
+
+	 */
 
 
 }

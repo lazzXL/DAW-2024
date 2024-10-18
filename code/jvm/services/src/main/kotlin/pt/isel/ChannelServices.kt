@@ -1,7 +1,6 @@
 package pt.isel
 
 import jakarta.inject.Named
-import java.util.UUID
 
 sealed class ChannelError {
     data object ChannelNotFound : ChannelError()
@@ -45,14 +44,16 @@ class ChannelServices(
 
     fun getJoinedChannels(
         userID : UInt,
-        name : String?
+        name : String?,
+        limit: Int?,
+        skip: Int?
     ): Either<ChannelError, List<Channel>> = trxManager.run {
-        success(repoChannel.findAllByUser(userID,name))
+        success(repoChannel.findAllByUser(userID,name,limit,skip))
     }
 
 
-    fun getPublicChannels(name:String?): Either<ChannelError,List<Channel>> = trxManager.run {
-        success(repoChannel.getPublicChannels(name))
+    fun getPublicChannels(name: String?, limit: Int?, skip: Int?): Either<ChannelError,List<Channel>> = trxManager.run {
+        success(repoChannel.getPublicChannels(name,limit,skip))
     }
 
 
