@@ -7,12 +7,16 @@ import pt.isel.*
 import pt.isel.http_api.model.SendMessageInput
 import pt.isel.http_api.model.handleMessageFailure
 
-
+/**
+ * REST controller for the messages.
+ * @property messageService the service for the messages.
+ */
 @RestController
 @RequestMapping("/message")
 class MessageController(
     private val messageService: MessageServices
 ) {
+
 
     @PostMapping("/send")
     fun sendMessage(@RequestBody messageInput: SendMessageInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Message> {

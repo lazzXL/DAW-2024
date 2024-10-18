@@ -13,13 +13,20 @@ import pt.isel.http_api.model.RegistrationInput
 import pt.isel.http_api.model.handleUserFailure
 
 
-
+/**
+ * REST Controller for managing users.
+ * @property userService the services for the user.
+ */
 @RestController
 @RequestMapping("/user")
 class UserController(
     private val userService: UserServices
 ) {
-
+    /**
+     * Logs in a user.
+     * @param userInput the input for login.
+     * @return the response entity.
+     */
     @PostMapping("/login")
     fun login(@RequestBody userInput: LoginInput): ResponseEntity<LoginOutput> {
         val result: Either<UserError, TokenExternalInfo> = userService.login(
@@ -33,6 +40,11 @@ class UserController(
 
         }
     }
+    /**
+     * Registers a user.
+     * @param registrationInput the input for registration.
+     * @return the response entity.
+     */
     @PostMapping("/register")
     fun register(@RequestBody registrationInput: RegistrationInput): ResponseEntity<User> {
         val result: Either<UserError, User> = userService.registration(

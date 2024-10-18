@@ -74,6 +74,13 @@ class RepositoryRegisterInvitationJdbi(
             .execute()
     }
 
+    override fun deleteByCode(code: UUID) {
+        handle
+            .createUpdate("DELETE FROM dbo.register_invitations WHERE code = :code")
+            .bind("code", code.toString())
+            .execute()
+    }
+
     override fun clear() {
         handle.createUpdate("DELETE FROM dbo.register_invitations").execute()
     }
