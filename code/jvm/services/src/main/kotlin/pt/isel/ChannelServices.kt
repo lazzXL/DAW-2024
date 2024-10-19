@@ -5,11 +5,8 @@ import jakarta.inject.Named
 sealed class ChannelError {
     data object ChannelNotFound : ChannelError()
     data object ChannelNameAlreadyExists: ChannelError()
-
     data object ChannelNotPublic : ChannelError()
-    data object AdminNotFound: ChannelError()
-    data object UserNotFound: ChannelError()
-    data object InvalidInvite: ChannelError()
+
 
 }
 

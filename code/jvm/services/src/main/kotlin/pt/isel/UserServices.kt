@@ -58,7 +58,6 @@ class UserServices(
     fun findByName(name : String) : Either<UserError, User>  =
         trxManager.run{
             val user = repoUser.findByName(name) ?: return@run failure(UserError.UsernameAlreadyExists)
-            println(user.name)
             success(user)
         }
 

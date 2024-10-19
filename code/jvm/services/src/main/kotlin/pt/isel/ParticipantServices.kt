@@ -8,8 +8,6 @@ sealed class ParticipantError{
 
     data object ChannelNotPublic: ParticipantError()
 
-    data object UserNotFound: ParticipantError()
-
     data object ChannelNotFound: ParticipantError()
 
     data object InvalidInvite: ParticipantError()

@@ -33,8 +33,8 @@ class MessageServicesTest {
             trxManager.run {
                 repoMessage.clear()
                 repoParticipant.clear()
-                repoChannel.clear()
                 repoChannelInvitation.clear()
+                repoChannel.clear()
                 repoRegisterInvitation.clear()
                 repoUser.clear()
                 repoUser.createUser("Paulo",
