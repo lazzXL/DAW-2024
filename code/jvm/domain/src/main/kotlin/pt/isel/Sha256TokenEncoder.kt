@@ -3,6 +3,9 @@ package pt.isel
 import java.security.MessageDigest
 import java.util.Base64
 
+/**
+ * Token encoder using SHA256.
+ */
 class Sha256TokenEncoder : TokenEncoder {
     override fun createValidationInformation(token: String): TokenValidationInfo = TokenValidationInfo(hash(token))
 

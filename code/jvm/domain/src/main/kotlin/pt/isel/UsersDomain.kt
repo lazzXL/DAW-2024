@@ -7,6 +7,12 @@ import java.security.SecureRandom
 import java.util.Base64.getUrlDecoder
 import java.util.Base64.getUrlEncoder
 
+/**
+ * Represents the users domain.
+ * @property passwordEncoder the password encoder.
+ * @property tokenEncoder the token encoder.
+ * @property config the users domain configuration.
+ */
 @Named
 class UsersDomain(
     private val passwordEncoder: PasswordEncoder,
