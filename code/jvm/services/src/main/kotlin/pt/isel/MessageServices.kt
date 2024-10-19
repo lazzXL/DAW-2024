@@ -16,7 +16,6 @@ class MessageServices(
 ) {
     fun sendMessage(
         content: String,
-        //date: LocalDateTime,
         channelId: UInt,
         userId: UInt
     ): Either<MessageError, Message> = trxManager.run {
@@ -28,8 +27,8 @@ class MessageServices(
     fun getMessages(
         channelID: UInt,
         userId: UInt,
-        limit: Int?,
-        skip: Int?
+        limit: Int? = null,
+        skip: Int? = null
     ): Either<MessageError, List<Message>> = trxManager.run {
         val channel = repoChannel.findById(channelID) ?: return@run failure(MessageError.ChannelNotFound)
         repoParticipant.isParticipant(channelID,userId) ?: return@run failure(MessageError.ParticipantNotFound)

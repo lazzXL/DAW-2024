@@ -44,15 +44,20 @@ class ChannelServices(
 
     fun getJoinedChannels(
         userID : UInt,
-        name : String?,
-        limit: Int?,
-        skip: Int?
+        name : String? = null,
+        limit: Int? = null,
+        skip: Int? = null
     ): Either<ChannelError, List<Channel>> = trxManager.run {
         success(repoChannel.findAllByUser(userID,name,limit,skip))
     }
 
 
-    fun getPublicChannels(name: String?, limit: Int?, skip: Int?): Either<ChannelError,List<Channel>> = trxManager.run {
+    fun getPublicChannels(
+        name: String? = null,
+        limit: Int? = null,
+        skip: Int? = null
+    )
+    : Either<ChannelError,List<Channel>> = trxManager.run {
         success(repoChannel.getPublicChannels(name,limit,skip))
     }
 

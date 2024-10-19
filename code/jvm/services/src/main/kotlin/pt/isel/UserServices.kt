@@ -14,7 +14,7 @@ sealed class UserError {
     data object PasswordsDoNotMatch: UserError()
     data object UsernameAlreadyExists: UserError()
     data object InsecurePassword: UserError()
-    data object InvitatioDoesNotExist: UserError()
+    data object InvitationDoesNotExist: UserError()
 
 }
 
@@ -55,6 +55,13 @@ class UserServices(
             )
         )
     }
+    fun findByName(name : String) : Either<UserError, User>  =
+        trxManager.run{
+            val user = repoUser.findByName(name) ?: return@run failure(UserError.UsernameAlreadyExists)
+            println(user.name)
+            success(user)
+        }
+
     //registration
     fun registration(
         code: UUID,
@@ -68,7 +75,7 @@ class UserServices(
         val passwordValidationInfo = usersDomain.createPasswordValidationInformation(password)
         return trxManager.run {
             val invite = repoRegisterInvitation.findByCode(code)
-                ?: return@run failure(UserError.InvitatioDoesNotExist)
+                ?: return@run failure(UserError.InvitationDoesNotExist)
             if (repoUser.findByEmail(email) != null)
                 return@run failure(UserError.EmailAlreadyExists)
             if (repoUser.findByName(name) != null)

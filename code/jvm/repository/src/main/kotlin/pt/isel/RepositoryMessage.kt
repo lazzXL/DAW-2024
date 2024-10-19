@@ -7,5 +7,4 @@ interface RepositoryMessage : Repository<Message> {
 
     fun getMessages(channel: Channel, limit : Int? = null, skip : Int? = null): List<Message>
 
-
 }

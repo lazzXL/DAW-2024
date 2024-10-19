@@ -36,7 +36,7 @@ fun <T> handleUserFailure(error: UserError): ResponseEntity<T> {
         is UserError.PasswordsDoNotMatch -> HttpStatus.BAD_REQUEST to "Passwords do not match."
         is UserError.UsernameAlreadyExists -> HttpStatus.CONFLICT to "Username already exists"
         is UserError.InsecurePassword -> HttpStatus.BAD_REQUEST to "Password is not secure (Must contain upper and lower case and a number)"
-        is UserError.InvitatioDoesNotExist -> HttpStatus.NOT_FOUND to "Invitation not found."
+        is UserError.InvitationDoesNotExist -> HttpStatus.NOT_FOUND to "Invitation not found."
     }
 
     return ResponseEntity.status(status).body(message as T)
