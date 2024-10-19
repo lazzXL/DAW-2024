@@ -4,8 +4,9 @@ import pt.isel.RegisterInvitation
 import pt.isel.RepositoryRegisterInvitation
 import java.util.*
 
+val registerInvitations = mutableListOf<RegisterInvitation>()
+
 class RepositoryRegisterInvitationInMem : RepositoryRegisterInvitation {
-    private val registerInvitations = mutableListOf<RegisterInvitation>()
 
     override fun findById(id: UInt): RegisterInvitation? =
         registerInvitations.firstOrNull{it.id == id}
@@ -28,6 +29,13 @@ class RepositoryRegisterInvitationInMem : RepositoryRegisterInvitation {
     override fun findByCode(code: UUID): RegisterInvitation? =
         registerInvitations.firstOrNull{it.code == code}
 
-    override fun createInvitation(code: UUID): RegisterInvitation =
-        RegisterInvitation(registerInvitations.count().toUInt(), code)
+    override fun deleteByCode(code: UUID) {
+        registerInvitations.removeIf { it.code == code }
+    }
+
+    override fun createInvitation(code: UUID): RegisterInvitation {
+        val invitation = RegisterInvitation(registerInvitations.count().toUInt(), code)
+        registerInvitations.add(invitation)
+        return invitation
+    }
 }

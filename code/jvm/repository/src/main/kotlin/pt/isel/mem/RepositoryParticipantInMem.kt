@@ -2,8 +2,10 @@ package pt.isel.mem
 
 import pt.isel.*
 
+val participants = mutableListOf<Participant>()
+
 class RepositoryParticipantInMem : RepositoryParticipant {
-    private val participants = mutableListOf<Participant>()
+
 
     override fun findById(id: UInt): Participant? =
         participants.firstOrNull{it.id == id}
@@ -23,9 +25,14 @@ class RepositoryParticipantInMem : RepositoryParticipant {
     override fun clear() =
         participants.clear()
 
-    override fun isParticipant(channelId: UInt, userId: UInt): Participant? =
-        TODO()
+    override fun isParticipant(channelId: UInt, userId: UInt): Participant? {
+        val participants = participants.filter { it.channel.id == channelId }
+        return participants.find { it.user.id == userId  }
+    }
 
-    override fun createParticipant(user: User, channel: Channel, permission: Permission): Participant =
-        Participant(participants.count().toUInt(), user, channel, permission)
+    override fun createParticipant(user: User, channel: Channel, permission: Permission): Participant {
+        val participant = Participant(participants.count().toUInt(), user, channel, permission)
+        participants.add(participant)
+        return participant
+    }
 }

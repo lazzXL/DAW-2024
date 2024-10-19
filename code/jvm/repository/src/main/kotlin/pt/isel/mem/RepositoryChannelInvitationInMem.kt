@@ -6,12 +6,12 @@ import pt.isel.Permission
 import pt.isel.RepositoryChannelInvitation
 import java.util.*
 
+private val channelInvitations = mutableListOf<ChannelInvitation>()
+
 class RepositoryChannelInvitationInMem : RepositoryChannelInvitation {
-    private val channelInvitations = mutableListOf<ChannelInvitation>()
 
     override fun findById(id: UInt): ChannelInvitation? =
         channelInvitations.firstOrNull{it.id == id}
-
 
     override fun findAll(): List<ChannelInvitation> =
         channelInvitations.toList()
@@ -31,6 +31,9 @@ class RepositoryChannelInvitationInMem : RepositoryChannelInvitation {
     override fun findByCode(code: UUID): ChannelInvitation? =
         channelInvitations.firstOrNull{it.code == code}
 
-    override fun createInvitation(code: UUID, permission: Permission, channel: Channel): ChannelInvitation =
-        ChannelInvitation(channelInvitations.count().toUInt(), code, channel, permission)
+    override fun createInvitation(code: UUID, permission: Permission, channel: Channel): ChannelInvitation {
+        val invitation = ChannelInvitation(channelInvitations.count().toUInt(), code, channel, permission)
+        channelInvitations.add(invitation)
+        return invitation
+    }
 }
