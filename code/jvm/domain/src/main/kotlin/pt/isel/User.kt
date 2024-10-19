@@ -16,7 +16,6 @@ const val MAX_NAME_LENGTH = 40
  */
 data class User (
     val id : UInt,
-   // val token : UUID,
     val name : String,
     val email : Email,
     val password : PasswordValidationInfo

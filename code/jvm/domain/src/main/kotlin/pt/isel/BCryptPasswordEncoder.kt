@@ -3,6 +3,9 @@ package pt.isel
 import jakarta.inject.Named
 import org.springframework.security.crypto.bcrypt.BCrypt
 
+/**
+ * Password encoder using BCrypt from spring security.
+ */
 @Named
 class BCryptPasswordEncoder : PasswordEncoder {
     override fun createValidationInformation(password: String): PasswordValidationInfo {

@@ -1,5 +1,8 @@
 package pt.isel
 
+/**
+ * Interface for password encoding.
+ */
 interface PasswordEncoder {
     fun createValidationInformation(password: String): PasswordValidationInfo
 
