@@ -1,0 +1,424 @@
+openapi: 3.0.3
+info:
+  title: Chelas Instant Messaging API
+  description: A web API for handling messages, channels, invitations, participants, and user registration/authentication.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /user/register:
+    post:
+      summary: User registration
+      requestBody:
+        description: User registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationInput'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Registration failed
+        '404':
+          description: Registration failed
+        '409':
+          description: Registration failed
+  /user/login:
+    post:
+      summary: User login
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '201':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOutput'
+        '400':
+          description: Login failed
+  /channel/create:
+    post:
+      summary: Create a new channel
+      requestBody:
+        description: Create a new channel with the given input
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChannelInput'
+      responses:
+        '201':
+          description: Channel created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '400':
+          description: Channel creation failed
+  /channel/{channelId}:
+    get:
+      summary: Get a specific channel by ID
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Channel retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '400':
+          description: Failed to fetch the channel
+  /channel/joined:
+    get:
+      summary: Get joined channels
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of joined channels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
+        '400':
+          description: Failed to fetch channels
+  /channel/public:
+    get:
+      summary: Get public channels
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of public channels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
+        '400':
+          description: Failed to fetch channels
+  /message/send:
+    post:
+      summary: Send a message
+      requestBody:
+        description: Send a message with content, date, and channel ID.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageInput'
+      responses:
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Message sending failed
+  /message/{channelId}/:
+    get:
+      summary: Get messages in a channel
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '400':
+          description: Failed to fetch messages
+  /invitation/create:
+    post:
+      summary: Create a channel invitation
+      requestBody:
+        description: Invitation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvitationInput'
+      responses:
+        '201':
+          description: Invitation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelInvitation'
+        '400':
+          description: Invitation creation failed
+  /registerInvitation/create:
+    post:
+      summary: Create a register invitation
+      responses:
+        '201':
+          description: Invitation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterInvitation'
+        '400':
+          description: Invitation creation failed
+  /registerInvitation/delete/{invitationId}:
+    delete:
+      summary: Deletes a register invitation
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Invitation deleted successfully
+        '400':
+          description: Invitation deletion failed
+  /invitation/delete/{invitationId}:
+    delete:
+      summary: Deletes a channel invitation
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Invitation deleted successfully
+        '400':
+          description: Invitation deletion failed
+  /participant/join-invite:
+    post:
+      summary: Join a channel using an invitation code
+      requestBody:
+        description: Join channel by invitation code
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinChannelViaInviteInput'
+      responses:
+        '200':
+          description: Successfully joined channel
+        '400':
+          description: Failed to join channel
+  /participant/join:
+    post:
+      summary: Join a public channel
+      requestBody:
+        description: Channel join request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinPublicChannelInput'
+      responses:
+        '200':
+          description: Successfully joined channel
+        '400':
+          description: Failed to join channel
+  /participant/leave/{channelId}:
+    delete:
+      summary: Leave a channel
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully left the channel
+        '400':
+          description: Failed to leave channel
+components:
+  schemas:
+    SendMessageInput:
+      type: object
+      properties:
+        content:
+          type: string
+        channelId:
+          type: integer
+      required:
+        - content
+        - channelId
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        date:
+          type: string
+          format: date-time
+        channelId:
+          type: integer
+        userId:
+          type: integer
+
+    Channel:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - PUBLIC
+            - PRIVATE
+
+    CreateChannelInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        isPublic:
+          type: boolean
+      required:
+        - name
+        - description
+        - isPublic
+
+    CreateInvitationInput:
+      type: object
+      properties:
+        channelID:
+          type: integer
+        permission:
+          type: string
+
+    ChannelInvitation:
+      type: object
+      properties:
+        id:
+          type: integer
+        channelId:
+          type: integer
+        code:
+          type: string
+        permission:
+          type: string
+
+    RegisterInvitation:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+
+    JoinChannelViaInviteInput:
+      type: object
+      properties:
+        code:
+          type: string
+
+    JoinPublicChannelInput:
+      type: object
+      properties:
+        channelId:
+          type: integer
+
+    LoginInput:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+
+    LoginOutput:
+      type: object
+      properties:
+        tokenValue:
+          type: string
+
+    RegistrationInput:
+      type: object
+      properties:
+        invitation:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
