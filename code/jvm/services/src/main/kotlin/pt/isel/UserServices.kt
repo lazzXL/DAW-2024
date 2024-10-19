@@ -57,7 +57,7 @@ class UserServices(
     }
     fun findByName(name : String) : Either<UserError, User>  =
         trxManager.run{
-            val user = repoUser.findByName(name) ?: return@run failure(UserError.UsernameAlreadyExists)
+            val user = repoUser.findByName(name) ?: return@run failure(UserError.UserNotFound)
             success(user)
         }
 
@@ -98,9 +98,6 @@ class UserServices(
         repoUser.save(updatedUser)
         success(updatedUser)
     }
-
-
-     */
     //change email
     fun changeEmail(
         email : Email,
@@ -132,6 +129,7 @@ class UserServices(
         val user = repoUser.findById(userId) ?: return@run failure(UserError.UserNotFound)
         success(user)
     }
+     */
 
     fun getUserByToken(token: String): Either<UserError, User> = trxManager.run {
         if (!usersDomain.canBeToken(token)) {
