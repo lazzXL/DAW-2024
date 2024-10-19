@@ -37,13 +37,16 @@ dependencies {
 	testImplementation(project(mapOf("path" to ":host")))
 }
 
+tasks.test {
+	useJUnitPlatform()
+	environment("DB_URL", "jdbc:postgresql://localhost:5431/postgres?user=postgres&password=postgres")
+	dependsOn(":repository-jdbi:dbTestsWait")
+	finalizedBy(":repository-jdbi:dbTestsDown")
+}
+
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
 	//jvmToolchain(21)
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }

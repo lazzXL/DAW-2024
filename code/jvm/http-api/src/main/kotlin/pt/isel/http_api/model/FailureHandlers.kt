@@ -14,9 +14,6 @@ fun <T> handleChannelFailure(error: ChannelError): ResponseEntity<T> {
         is ChannelError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
         is ChannelError.ChannelNameAlreadyExists -> HttpStatus.CONFLICT to "Channel name already exists."
         is ChannelError.ChannelNotPublic -> HttpStatus.FORBIDDEN to "Channel is not public."
-        is ChannelError.AdminNotFound -> HttpStatus.NOT_FOUND to "Admin not found."
-        is ChannelError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
-        is ChannelError.InvalidInvite -> HttpStatus.BAD_REQUEST to "Invalid invite code."
     }
 
     return ResponseEntity.status(status).body(message as T)
@@ -79,10 +76,6 @@ fun <T> handleChannelInvitationFailure(error: ChannelInvitationError): ResponseE
 */
 fun <T> handleRegisterInvitationFailure(error: RegisterInvitationError): ResponseEntity<T> {
     val (status, message) = when (error) {
-        is RegisterInvitationError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
-        is RegisterInvitationError.UserNotFound -> HttpStatus.NOT_FOUND to "User not found."
-        is RegisterInvitationError.PermissionInvalid -> HttpStatus.BAD_REQUEST to "Permission invalid."
-        is RegisterInvitationError.UserNotInChannel -> HttpStatus.BAD_REQUEST to "User not in channel."
         is RegisterInvitationError.InvitationNotFound -> HttpStatus.NOT_FOUND to "Invitation not found."
     }
 
@@ -97,7 +90,6 @@ fun <T> handleParticipantFailure(error: ParticipantError): ResponseEntity<T> {
     val (status, message) = when (error) {
         is ParticipantError.ParticipantNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
         is ParticipantError.ChannelNotPublic -> HttpStatus.FORBIDDEN to "Channel not public."
-        is ParticipantError.UserNotFound -> HttpStatus.NOT_FOUND to "Participant not found."
         is ParticipantError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found"
         is ParticipantError.InvalidInvite -> HttpStatus.NOT_FOUND to "Invalid Invitation"
         is ParticipantError.UserAlreadyInChannel ->  HttpStatus.CONFLICT to "User already in channel."

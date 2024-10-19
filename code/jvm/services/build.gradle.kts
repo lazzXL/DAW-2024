@@ -28,7 +28,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    environment("DB_URL", "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=postgres")
+    environment("DB_URL", "jdbc:postgresql://localhost:5431/postgres?user=postgres&password=postgres")
+    dependsOn(":repository-jdbi:dbTestsWait")
+    finalizedBy(":repository-jdbi:dbTestsDown")
 }
 
 

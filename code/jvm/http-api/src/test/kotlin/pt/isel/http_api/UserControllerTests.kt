@@ -18,14 +18,60 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
-class UserControllerTests {
+class UserControllerTest {
 
+	private val defaultName = "Alice"
+	private val defaultEmail = Email("Alice@email.com")
+	private val defaultPassword = "Alice1234"
+	private val defaultInvitation = UUID.fromString("00000000-0000-0000-0000-000000000000")
 	companion object {
+		private val jdbi =
+			Jdbi
+				.create(
+					PGSimpleDataSource().apply {
+						setURL(Environment.getDbUrl())
+					},
+				).configureWithAppRequirements()
+
 		@JvmStatic
 		fun transactionManagers(): Stream<TransactionManager> =
 			Stream.of(
 				TransactionManagerJdbi(jdbi).also { cleanup(it) },
 			)
+
+		private fun cleanup(trxManager: TransactionManager) {
+			trxManager.run {
+				repoUser.clear()
+				repoRegisterInvitation.clear()
+				repoRegisterInvitation.createInvitation(UUID.fromString("00000000-0000-0000-0000-000000000000"))
+			}
+		}
+
+		private fun createUserService(
+			trxManager: TransactionManager,
+			testClock: TestClock,
+			tokenTtl: Duration = 30.days,
+			tokenRollingTtl: Duration = 30.minutes,
+			maxTokensPerUser: Int = 3,
+		) = UserServices(
+			trxManager,
+			UsersDomain(
+				BCryptPasswordEncoder(),
+				Sha256TokenEncoder(),
+				UsersDomainConfig(
+					tokenSizeInBytes = 256 / 8,
+					tokenTtl = tokenTtl,
+					tokenRollingTtl,
+					maxTokensPerUser = maxTokensPerUser,
+				),
+			),
+			testClock,
+		)
+	}
+
+	private fun createUser(trxManager: TransactionManager) {
+		val controllerUser = UserController(createUserService(trxManager, TestClock()))
+		assertEquals(HttpStatus.CREATED, controllerUser.register(RegistrationInput(defaultInvitation, defaultName, defaultEmail, defaultPassword)).statusCode)
 	}
 	@ParameterizedTest
 	@MethodSource("transactionManagers")
@@ -33,13 +79,13 @@ class UserControllerTests {
 		val controllerUser = UserController(createUserService(trxManager, TestClock()))
 
 		controllerUser.register(RegistrationInput(defaultInvitation, defaultName, defaultEmail, defaultPassword)).let { resp ->
-			assertEquals(HttpStatus.CREATED, resp.statusCode)
-			assertNotNull(resp.body)
-			assertIs<User>(resp.body)
-			val user = resp.body as User
-			assertEquals(defaultName, user.name)
-			assertEquals(defaultEmail, user.email)
-		}
+				assertEquals(HttpStatus.CREATED, resp.statusCode)
+				assertNotNull(resp.body)
+				assertIs<User>(resp.body)
+				val user = resp.body as User
+				assertEquals(defaultName, user.name)
+				assertEquals(defaultEmail, user.email)
+			}
 	}
 
 	@ParameterizedTest
