@@ -3,7 +3,6 @@ package pt.isel.http_api
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.*
-import pt.isel.http_api.model.CreateChannelInput
 import pt.isel.http_api.model.LoginInput
 import pt.isel.http_api.model.RegistrationInput
 import java.util.*
@@ -36,6 +35,7 @@ import kotlin.time.Duration.Companion.minutes
             repoUser.clear()
             repoRegisterInvitation.clear()
             repoRegisterInvitation.createInvitation(UUID.fromString("00000000-0000-0000-0000-000000000000"))
+            repoRegisterInvitation.createInvitation(UUID.fromString("00000000-0000-0000-0000-000000000001"))
         }
     }
 
