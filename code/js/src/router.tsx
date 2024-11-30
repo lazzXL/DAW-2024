@@ -5,11 +5,14 @@ import { MessagingApp } from "./components/MessagingApp";
 import { Profile } from "./pages/Profile";
 import { Settings } from "./pages/Settings";
 import { DiscoverPublic } from "./pages/DiscoverPublic";
+import { AuthRequire } from "./AuthRequire";
+import { Login } from "./login";
+import { Register } from "./register";
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <Layout />, // Apply the layout here
+        element: <AuthRequire><Layout /></AuthRequire>, // Dynamically redirect based on auth state
         children: [
             { path: "/", element: <MessagingApp /> },
             { path: "/profile", element: <Profile /> },
@@ -17,4 +20,13 @@ export const router = createBrowserRouter([
             { path: "/discover-channels", element: <DiscoverPublic /> },
         ],
     },
+    {
+        path: "/login",
+        element: <Login />,
+    },
+    {
+        path: "/register",
+        element: <Register />,
+    },
 ]);
+

@@ -1,34 +1,28 @@
 import * as React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { AuthContext } from './AuthProvider';
+import { Navigate } from 'react-router-dom';
 
-/***********************
- * RequireAuth Component
- */
-export function Login() {
-    const location = useLocation()
-    const {username, setUsername} = React.useContext(AuthContext)
+export function Register() {
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
             username: "",
-            password: ""
+            password: "",
+            email : "",
+            invitation: ""
         }
     })
     if (state.tag === "redirect") return (
-        <Navigate to={location.state?.source ? location.state.source : "/"} replace={true} />
-
+        <Navigate to={"/login"} replace={true}></Navigate>
     )
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
         if (state.tag != "editing") { return }
         dispatch({ type: "submit" })
-        const { username, password } = state.inputs
-        authenticate(username, password)
+        const { username, password, email, invitation } = state.inputs
+        registerConfirm(username, password, email, invitation)
             .then(res => { 
-                if(res) { setUsername(res) }
                 dispatch( res
                     ? {type: "success"}
-                    : {type: "error", message: `Invalid username or password: ${username} or ${password}`}
+                    : {type: "error", message: `Invalid`}
             )})
             .catch(err => dispatch({type: "error", message: err.message}))
     }
@@ -38,6 +32,8 @@ export function Login() {
     }
     const usr = state.tag === "editing" ? state.inputs.username : ""
     const password = state.tag === "editing" ? state.inputs.password : ""
+    const email = state.tag === "editing" ? state.inputs.email : ""
+    const invitation = state.tag === "editing" ? state.inputs.invitation : ""
     return (
         <form onSubmit={handleSubmit}>
             <fieldset disabled={state.tag !== 'editing'}>
@@ -50,7 +46,15 @@ export function Login() {
                     <input id="password" type="text" name="password" value={password} onChange={handleChange} />
                 </div>
                 <div>
-                    <button type="submit">Login</button>
+                    <label htmlFor="email">Email</label>
+                    <input id="email" type="text" name="email" value={email} onChange={handleChange} />
+                </div>
+                <div>
+                    <label htmlFor="invitation">Invitation</label>
+                    <input id="invitation" type="text" name="invitation" value={invitation} onChange={handleChange} />
+                </div>
+                <div>
+                    <button type="submit">Register</button>
                 </div>
             </fieldset>
             {state.tag === 'editing' && state.error}
@@ -72,14 +76,14 @@ function reduce(state: State, action: Action): State {
         case 'submitting':
             switch (action.type) {
                 case "success": return { tag: 'redirect' }
-                case "error": return { tag: 'editing', error: action.message, inputs: { username: "", password: "" } }
+                case "error": return { tag: 'editing', error: action.message, inputs: { username: "", password: "", email : "", invitation : ""} }
             }
         case 'redirect':
             throw Error("Already in final State 'redirect' and should not reduce to any other State.")
     }
 }
 
-type State = { tag: 'editing'; error?: string, inputs: { username: string, password: string }; }
+type State = { tag: 'editing'; error?: string, inputs: { username: string, password: string , email : string, invitation : string}; }
     | { tag: 'submitting' }
     | { tag: 'redirect' }
 
@@ -98,10 +102,10 @@ function delay(delayInMs: number) {
     });
 }
 
-async function authenticate(username: string, password: string): Promise<string | undefined> {
+async function registerConfirm(username : string, password : string , email : string, invitation : string): Promise<true | undefined> {
     await delay(1000);
     if ((username == 'roger' || username == 'bob') && password == 'schmidt') {
-        return username;
+        return true;
     }
     return undefined;
 }

@@ -3,6 +3,11 @@ const path = require('path');
 module.exports = {
   entry: './src/index.ts',
   mode: 'development',
+  devServer: {
+    port: 8080,
+    historyApiFallback: true,
+    compress: false,
+  },
   module: {
     rules: [
       {
