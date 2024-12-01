@@ -1,31 +1,18 @@
 import * as React from "react";
 import { ChannelList } from "./ChannelList";
 import { MessagePanel } from "./MessagePanel";
-import { fetchChannels } from "../fakeApiService";
-import { messagingReducer, MessagingState, Action } from "../reducer";
+import { Channel } from "../domain/Channel";
 
 export function MessagingApp() {
-    const [state, dispatch] = React.useReducer<React.Reducer<MessagingState, Action>>(messagingReducer, {
-        selectedChannel: null,
-    });
-    const [channels, setChannels] = React.useState<string[]>([]);
-
-    React.useEffect(() => {
-        fetchChannels().then(setChannels);
-    }, []);
-
-    const handleSelectChannel = (channel: string) => {
-        dispatch({ type: "select-channel", channel });
-    };
+    const [selectedChannel, setSelectedChannel] = React.useState<Channel | null>(null);
 
     return (
         <div style={{ display: "flex", height: "100vh", fontFamily: "Arial, sans-serif" }}>
             <ChannelList
-                selectedChannel={state.selectedChannel}
-                onSelectChannel={handleSelectChannel}
-                channels={channels}
+                selectedChannel={selectedChannel}
+                onSelectChannel={(channel) => setSelectedChannel(channel)}
             />
-            <MessagePanel channel={state.selectedChannel} />
+            <MessagePanel channel={selectedChannel} />
         </div>
     );
 }

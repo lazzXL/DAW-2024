@@ -1,5 +1,5 @@
-import * as React from "react";
+import { ProfileInfo } from "../components/Profile";
 
 export function Profile() {
-    return <div>Profile Page</div>;
+    return ProfileInfo();
 }
