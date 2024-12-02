@@ -5,6 +5,11 @@ export type Message = {
     timestamp: string;
 };
 
+export type PublicChannel = {
+    name: string;
+    description: string;
+};
+
 const fakeChannels = [  "General", "Support", "Random",
                         "General2", "Support2", "Random2",
                         "General3", "Support3", "Random3",
@@ -20,6 +25,12 @@ const fakeMessages: Message[] = [
     { channel: "Random", sender: "Charlie", content: "Did you watch the game?", timestamp: "2024-11-20 8:30 PM" },
 ];
 
+const fakePublicChannels : PublicChannel[] = [
+    { name: "General", description: "A general channel for everyone" },
+    { name: "Support", description: "A channel for support" },
+    { name: "Random", description: "A random channel" },
+];
+
 
 export const fetchChannels = (): Promise<string[]> => {
     return new Promise((resolve) => {
@@ -30,5 +41,11 @@ export const fetchChannels = (): Promise<string[]> => {
 export const fetchMessages = (channel: string): Promise<Message[]> => {
     return new Promise((resolve) => {
         setTimeout(() => resolve(fakeMessages.filter((msg) => msg.channel === channel)), 1000); // Simulate 1-second delay
+    });
+};
+
+export const fetchPublicChannels = (): Promise<PublicChannel[]> => {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(fakePublicChannels), 1000); 
     });
 };

@@ -1,5 +1,6 @@
 import * as React from "react";
+import { DisplayPublicChannels } from "../components/DisplayPublicChannels";
 
 export function DiscoverPublic() {
-    return <div>Discover Public Channels</div>;
+    return DisplayPublicChannels();
 }
