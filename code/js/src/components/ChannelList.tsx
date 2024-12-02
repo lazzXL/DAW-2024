@@ -13,9 +13,16 @@ export function ChannelList({ selectedChannel, onSelectChannel, /*channels*/ }: 
     const [channels, setChannels] = React.useState<Channel[]>([]);
 
     React.useEffect(() => {
-        fetchChannels().then(setChannels);
-        /*fetch("")
+        //fetchChannels().then(setChannels);
+        console.log("BEFORE")
+        fetch("/channel/joined", {
+            method : "GET",
+            headers: {
+                "Authorization" : "Bearer xtr_w4I9T2UihjB34uOuU9U1RNhgMsdJfGj1E14WwXc="
+            }
+        })
             .then((response) => {
+                console.log("THEN" + response)
                 if (!response.ok) {
                     throw new Error("Failed to fetch channels");
                 }
@@ -24,7 +31,7 @@ export function ChannelList({ selectedChannel, onSelectChannel, /*channels*/ }: 
             .then((data: Channel[]) => {
                 setChannels(data); 
             })
-            .catch((error) => console.error(error));*/
+            .catch((error) => console.error(error));
     }, []);
 
     return (

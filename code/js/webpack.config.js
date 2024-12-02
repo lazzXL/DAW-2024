@@ -4,9 +4,15 @@ module.exports = {
   entry: './src/index.ts',
   mode: 'development',
   devServer: {
-    port: 8080,
+    port: 8000,
     historyApiFallback: true,
     compress: false,
+    proxy: [
+      {
+        context: ['/api','/channel'],
+        target: 'http://localhost:8080',
+      },
+    ],
   },
   module: {
     rules: [
