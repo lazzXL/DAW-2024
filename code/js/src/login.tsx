@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { json, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthProvider';
 
 /***********************
@@ -7,7 +7,7 @@ import { AuthContext } from './AuthProvider';
  */
 export function Login() {
     const location = useLocation()
-    const {username, setUsername} = React.useContext(AuthContext)
+    const {token, setToken} = React.useContext(AuthContext)
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
             username: "",
@@ -25,7 +25,8 @@ export function Login() {
         const { username, password } = state.inputs
         authenticate(username, password)
             .then(res => { 
-                if(res) { setUsername(res) }
+                console.log(res)
+                if(res) { setToken(res) }
                 dispatch( res
                     ? {type: "success"}
                     : {type: "error", message: `Invalid username or password: ${username} or ${password}`}
@@ -99,9 +100,24 @@ function delay(delayInMs: number) {
 }
 
 async function authenticate(username: string, password: string): Promise<string | undefined> {
-    await delay(1000);
-    if ((username == 'roger' || username == 'bob') && password == 'schmidt') {
-        return username;
+    try {
+        const response = await fetch("/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: username,
+                password: password,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to authenticate");
+        }
+
+        const data = await response.json();
+        return data.token; // Assuming 'token' is a property in the JSON response
+    } catch (error) {
+        console.error("Error during authentication:", error);
+        return undefined;
     }
-    return undefined;
 }

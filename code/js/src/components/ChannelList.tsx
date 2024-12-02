@@ -1,6 +1,7 @@
 import * as React from "react";
 import { fetchChannels } from "../fakeApiService";
 import { Channel } from "../domain/Channel";
+import { AuthContext } from "../AuthProvider";
 
 type ChannelListProps = {
     selectedChannel: Channel | null;
@@ -12,13 +13,15 @@ export function ChannelList({ selectedChannel, onSelectChannel, /*channels*/ }: 
 
     const [channels, setChannels] = React.useState<Channel[]>([]);
 
+    const { token } = React.useContext(AuthContext)
+
     React.useEffect(() => {
         //fetchChannels().then(setChannels);
         console.log("BEFORE")
         fetch("/channel/joined", {
             method : "GET",
             headers: {
-                "Authorization" : "Bearer xtr_w4I9T2UihjB34uOuU9U1RNhgMsdJfGj1E14WwXc="
+                "Authorization" : "Bearer " + token
             }
         })
             .then((response) => {
