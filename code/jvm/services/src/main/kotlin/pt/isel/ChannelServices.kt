@@ -1,11 +1,10 @@
 package pt.isel
 
-import jakarta.annotation.PreDestroy
 import jakarta.inject.Named
 import kotlinx.datetime.Clock
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
+
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -31,36 +30,36 @@ class ChannelServices(
     private var currentId = 0L
     private val lock = ReentrantLock()
 
-    private val scheduler: ScheduledExecutorService =
-        Executors.newScheduledThreadPool(1).also {
-            it.sche({ keepAlive() }, 2, 2, TimeUnit.SECONDS)
-        }
-
-    @PreDestroy
-    fun shutdown() {
-        scheduler.shutdown()
-    }
-
-    fun addEmitter(
-        eventId: Int,
-        listener: UpdatedChannelEmitter,
-    ) = lock.withLock {
-        val ev =
-            trxManager.run {
-                repoChannel.findById(eventId.toUInt())
-            }
-        requireNotNull(ev)
-
-        val oldListeners = listeners.getOrDefault(ev, emptyList())
-        listeners.putIfAbsent(ev, oldListeners + listener)
-        listener.onCompletion {
-            removeEmitter(ev, listener)
-        }
-        listener.onError {
-            removeEmitter(ev, listener)
-        }
-        listener
-    }
+//    private val scheduler: ScheduledExecutorService =
+//        Executors.newScheduledThreadPool(1).also {
+//            it.sche({ keepAlive() }, 2, 2, TimeUnit.SECONDS)
+//        }
+//
+//    @PreDestroy
+//    fun shutdown() {
+//        scheduler.shutdown()
+//    }
+//
+//    fun addEmitter(
+//        eventId: Int,
+//        listener: UpdatedChannelEmitter,
+//    ) = lock.withLock {
+//        val ev =
+//            trxManager.run {
+//                repoChannel.findById(eventId.toUInt())
+//            }
+//        requireNotNull(ev)
+//
+//        val oldListeners = listeners.getOrDefault(ev, emptyList())
+//        listeners.putIfAbsent(ev, oldListeners + listener)
+//        listener.onCompletion {
+//            removeEmitter(ev, listener)
+//        }
+//        listener.onError {
+//            removeEmitter(ev, listener)
+//        }
+//        listener
+//    }
 
     private fun removeEmitter(
         ev: Channel,
@@ -132,7 +131,7 @@ class ChannelServices(
         limit: Int? = null,
         skip: Int? = null
     )
-    : Either<ChannelError,List<Channel>> = trxManager.run {
+            : Either<ChannelError,List<Channel>> = trxManager.run {
         success(repoChannel.getPublicChannels(name,limit,skip))
     }
 
@@ -146,7 +145,7 @@ class ChannelServices(
         if (name.isNullOrBlank() && description.isNullOrBlank() && visibility == null)
             return@run failure(ChannelError.NoChannelChangesProvided)
         val channel = repoChannel.findById(id) ?:
-            return@run failure(ChannelError.ChannelNotFound)
+        return@run failure(ChannelError.ChannelNotFound)
         if (user.id != channel.adminID)
             return@run failure(ChannelError.UserNotAdmin)
         if (name != null && repoChannel.findByName(name) != null)
@@ -161,5 +160,3 @@ class ChannelServices(
     }
 
 }
-
-

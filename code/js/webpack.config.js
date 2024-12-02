@@ -9,8 +9,8 @@ module.exports = {
     compress: false,
     proxy: [
       {
-        context: ['/api','/channel', '/user'],
-        target: 'http://localhost:8080',
+        context: ['/api','/channel', '/user', '/participant'],
+        target: 'http://localhost:8100',
       },
     ],
   },

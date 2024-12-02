@@ -14,6 +14,8 @@ fun <T> handleChannelFailure(error: ChannelError): ResponseEntity<T> {
         is ChannelError.ChannelNotFound -> HttpStatus.NOT_FOUND to "Channel not found."
         is ChannelError.ChannelNameAlreadyExists -> HttpStatus.CONFLICT to "Channel name already exists."
         is ChannelError.ChannelNotPublic -> HttpStatus.FORBIDDEN to "Channel is not public."
+        ChannelError.NoChannelChangesProvided -> TODO()
+        ChannelError.UserNotAdmin -> TODO()
     }
 
     return ResponseEntity.status(status).body(message as T)

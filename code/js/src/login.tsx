@@ -115,7 +115,7 @@ async function authenticate(username: string, password: string): Promise<string 
         }
 
         const data = await response.json();
-        return data.token; // Assuming 'token' is a property in the JSON response
+        return data.token;
     } catch (error) {
         console.error("Error during authentication:", error);
         return undefined;
