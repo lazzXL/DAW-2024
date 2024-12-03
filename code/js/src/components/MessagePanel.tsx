@@ -1,6 +1,7 @@
 import * as React from "react";
 import { fetchMessages, Message } from "../fakeApiService";
 import { Channel } from "../domain/Channel";
+import { AuthContext } from "../AuthProvider";
 
 type MessagePanelState = {
     messages: Message[];
@@ -37,6 +38,7 @@ function messagePanelReducer(state: MessagePanelState, action: Action): MessageP
 }
 
 export function MessagePanel({ channel }: { channel: Channel | null }) {
+    const { token } = React.useContext(AuthContext);
     const [state, dispatch] = React.useReducer(messagePanelReducer, {
         messages: [],
         loading: false,
@@ -71,6 +73,26 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
         }
     };
 
+    const handleLeaveChannel = () => {
+        if (channel) {
+            fetch(`participant/leave/${channel.id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${token}` } })
+                .then((response) => {
+                    if (response.ok) {
+                        alert("Successfully left channel");
+                        //Todo: Refresh when we have cookies support
+                    } else {
+                        throw new Error("Failed to leave channel");
+                    }
+                    dispatch({ type: "RESET_MESSAGES" });
+                })
+                .catch((error: string) => {
+                    dispatch({ type: "FETCH_MESSAGES_ERROR", payload: error });
+                });
+        }
+    };
+        
+    
+
     const handleRetry = () => {
         if (channel) {
             dispatch({ type: "FETCH_MESSAGES_START" });
@@ -86,7 +108,17 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
 
     return (
         <div className="message-panel">
-            <div className="message-panel-header">{channel?.name || "No Channel Selected"}</div>
+            <div className="message-panel-header">
+                {channel?.name || "No Channel Selected"}
+                {channel && (
+                    <div className = "parent-container">
+                    <button className="leave-button" onClick={handleLeaveChannel}>
+                        Leave
+                    </button>
+                    </div>
+                )}
+            </div>
+            
             <div className="message-panel-messages">
                 {state.loading ? (
                     <p>Loading messages...</p>

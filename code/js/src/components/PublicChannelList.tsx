@@ -1,15 +1,29 @@
 import * as React from 'react';
+import { AuthContext } from "../AuthProvider";
 
 interface PublicChannel {
+    id : number;
     name: string;
     description: string;
 }
 type PublicChannelListProps = {
     onSelectChannel: (channel: PublicChannel) => void;
-    publicChannels: PublicChannel[];
 };
 
-export function PublicChannelList({ onSelectChannel, publicChannels }: PublicChannelListProps) {
+export function PublicChannelList({ onSelectChannel }: PublicChannelListProps) {
+    const [publicChannels, setPublicChannels] = React.useState<PublicChannel[]>([]);
+    const { token } = React.useContext(AuthContext);
+
+    React.useEffect(() => {
+        fetch('/channel/public', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => setPublicChannels(data))
+        .catch(error => console.error('Error fetching public channels:', error));
+    }, [token]);
     return (
         <div>
             <ul>
@@ -26,5 +40,6 @@ export function PublicChannelList({ onSelectChannel, publicChannels }: PublicCha
         </div>
     );
 };
+
 
 export default PublicChannelList;
