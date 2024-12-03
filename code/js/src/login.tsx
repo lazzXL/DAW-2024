@@ -40,22 +40,51 @@ export function Login() {
     const usr = state.tag === "editing" ? state.inputs.username : ""
     const password = state.tag === "editing" ? state.inputs.password : ""
     return (
-        <form onSubmit={handleSubmit}>
-            <fieldset disabled={state.tag !== 'editing'}>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input id="username" type="text" name="username" value={usr} onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input id="password" type="text" name="password" value={password} onChange={handleChange} />
-                </div>
-                <div>
-                    <button type="submit">Login</button>
-                </div>
-            </fieldset>
-            {state.tag === 'editing' && state.error}
-        </form>
+        <div className="login-container">
+            <div className="logo-container">
+                <img src="chimp.png" alt="App Logo" className="app-logo" />
+                <h1 className="logo-text">ChIMP</h1>
+            </div>
+            <form onSubmit={handleSubmit} className="login-form">
+                <fieldset disabled={state.tag !== 'editing'} className="form-fieldset">
+                    <div className="form-group">
+                        <label htmlFor="username" className="form-label">Username</label>
+                        <input 
+                            id="username" 
+                            type="text" 
+                            name="username" 
+                            value={usr} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your username"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password" className="form-label">Password</label>
+                        <input 
+                            id="password" 
+                            type="password" 
+                            name="password" 
+                            value={password} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your password"
+                        />
+                    </div>
+                    {state.tag === 'editing' && state.error && (
+                        <div className="error-message">{state.error}</div>
+                    )}
+                    <div className="form-actions">
+                        <button type="submit" className="btn-submit">Login</button>
+                    </div>
+                </fieldset>
+            </form>
+            <div className="register-container">
+                <button className="btn-register" onClick={() => alert("Navigate to register page")}>
+                    Register
+                </button>
+            </div>
+        </div>
     );
 }
 
@@ -115,7 +144,7 @@ async function authenticate(username: string, password: string): Promise<string 
         }
 
         const data = await response.json();
-        return data.token; // Assuming 'token' is a property in the JSON response
+        return data.token;
     } catch (error) {
         console.error("Error during authentication:", error);
         return undefined;
