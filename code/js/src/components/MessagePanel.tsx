@@ -3,6 +3,7 @@ import { fetchMessages, Message } from "../fakeApiService";
 import { Channel } from "../domain/Channel";
 import { AuthContext } from "../AuthProvider";
 import { ChannelDetailsModal } from "./ChannelDetails";
+import { LeaveChannelModal } from "./LeaveChannelScreen";
 
 export type Participant = {
     id: string;
@@ -66,10 +67,9 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
         error: null,
         message: "",
     });
+    const [pressedLeave, setPressedLeave] = React.useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
     const { token } = React.useContext(AuthContext);
-
-    // Leave Channel Handler
     const handleLeaveChannel = () => {
         if (channel) {
             fetch(`/participant/leave/${channel.id}`, {
@@ -78,8 +78,8 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
             })
                 .then((response) => {
                     if (!response.ok) throw new Error("Failed to leave channel");
-                    alert("Successfully left channel");
                     dispatch({ type: "RESET" });
+                    window.location.reload();
                 })
                 .catch((error: Error) => {
                     console.error("Error leaving channel:", error.message);
@@ -152,7 +152,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
             <MessagePanelHeader
                 channel={channel}
                 onDetailsClick={() => setIsDetailsOpen(true)}
-                onLeaveChannel={handleLeaveChannel}
+                onLeaveChannel={() => setPressedLeave(true)}
             />
             <MessageList
                 messages={state.messages}
@@ -201,6 +201,15 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
                     channelDescription={channel.description || ""}
                     participants={state.participants}
                     onClose={() => setIsDetailsOpen(false)}
+                />
+            )}
+            {pressedLeave && channel && (
+                <LeaveChannelModal
+                    channelName={channel.name}
+                    onConfirm={() => {
+                        handleLeaveChannel();
+                    }}
+                    onCancel={() => setPressedLeave(false)}
                 />
             )}
         </div>

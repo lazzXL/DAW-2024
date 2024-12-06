@@ -55,4 +55,12 @@ class ParticipantServices (
             ?: return@run failure(ParticipantError.ParticipantNotFound)
         success(repoParticipant.deleteById(participant.id))
     }
+
+    fun getParticipantsFromChannel(
+        channelId: UInt,
+        userId: UInt
+    ): Either<ParticipantError, List<Participant>> = trxManager.run {
+        repoParticipant.isParticipant(channelId,userId) ?: return@run failure(ParticipantError.ParticipantNotFound)
+        success(repoParticipant.getParticipantsFromChannel(channelId))
+    }
 }

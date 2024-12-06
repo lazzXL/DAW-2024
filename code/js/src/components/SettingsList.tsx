@@ -15,19 +15,22 @@ export function SettingsList() {
 
     return (
         <>
-            <div onClick={handleAccountInformation}>
-                {"Account Information"}
+            <div className="settings-list">
+                <div className="settings-item" onClick={handleAccountInformation}>
+                    {"Account Information"}
+                </div>
+                <div className="settings-item" onClick={() => setCurrentView('CreateInvitation')}>
+                    {"Create An Invitation"}
+                </div>
+                <div className="settings-item" onClick={() => setCurrentView('AboutAuthors')}>
+                    {"About Authors"}
+                </div>
+                <div className="settings-item" onClick={() => setCurrentView('DarkMode')}>
+                    {"Dark Mode"}
+                </div>
             </div>
-            <div onClick={() => setCurrentView('CreateInvitation')}>
-                {"Create An Invitation"}
-            </div>
-            <div onClick={() => setCurrentView('AboutAuthors')}>
-                {"About Authors"}
-            </div>
-            <div onClick={() => setCurrentView('DarkMode')}>
-                {"Dark Mode"}
-            </div>
-
+            
+            
             {currentView === 'ProfileInfo' && <ProfileInfo />}
             {currentView === 'AboutAuthors' && <AboutAuthors />}
         </>
@@ -58,21 +61,16 @@ function author(
     githubName : String
 ){
     return (
-    <div className="profile-container">
-        <div className="profile-header">
-            <img
-                src={"chimp.png"}
-                alt={`${name}'s avatar`}
-                className="profile-avatar"
-            />
-            <div className="profile-info">
-                <h1 className="profile-username">{name}</h1>
-                <p className="profile-email">{email}</p>
-                <p className="profile-age">{"Age: " + age}</p>
-                <p className="profile-github">{"Github: " +githubName}</p>
-            </div>
-        </div>
+        
+    <div className="author">
+        <h3>{name}</h3>
+        <p>Age: {age}</p>
+        <p>Email: <a href={`mailto:${email}`}>{email}</a></p>
+        <p>GitHub: <a href={`https://github.com/${githubName}`} target="_blank" rel="noopener noreferrer">{githubName}</a></p>
     </div>
+
+
+
 );}
 
 function darkMode(){
