@@ -1,28 +1,34 @@
 import * as React from 'react';
-import { Navigate } from 'react-router-dom';
+import { json, Navigate, useLocation } from 'react-router-dom';
+import { AuthContext } from './AuthProvider';
 
+/***********************
+ * RequireAuth Component
+ */
 export function Register() {
+    const location = useLocation()
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
+            invitation : "",
             username: "",
-            password: "",
             email : "",
-            invitation: ""
+            password: ""
         }
     })
     if (state.tag === "redirect") return (
-        <Navigate to={"/login"} replace={true}></Navigate>
+        <Navigate to={location.state?.source ? location.state.source : "/"} replace={true} />
+
     )
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
         if (state.tag != "editing") { return }
         dispatch({ type: "submit" })
-        const { username, password, email, invitation } = state.inputs
-        registerConfirm(username, password, email, invitation)
-            .then(res => { 
+        const { invitation, username, email, password} = state.inputs
+        registerFetch(invitation, username, email, password)
+            .then(res => {
                 dispatch( res
                     ? {type: "success"}
-                    : {type: "error", message: `Invalid`}
+                    : {type: "error", message: `Invalid username or password: ${username} or ${password}`}
             )})
             .catch(err => dispatch({type: "error", message: err.message}))
     }
@@ -30,28 +36,30 @@ export function Register() {
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         dispatch({ type: "edit", inputName: event.target.name, inputValue: event.target.value })
     }
-    const usr = state.tag === "editing" ? state.inputs.username : ""
-    const password = state.tag === "editing" ? state.inputs.password : ""
-    const email = state.tag === "editing" ? state.inputs.email : ""
     const invitation = state.tag === "editing" ? state.inputs.invitation : ""
+    const usr = state.tag === "editing" ? state.inputs.username : ""
+    const email = state.tag === "editing" ? state.inputs.email : ""
+    const password = state.tag === "editing" ? state.inputs.password : ""
+    
+    
     return (
         <form onSubmit={handleSubmit}>
             <fieldset disabled={state.tag !== 'editing'}>
                 <div>
-                    <label htmlFor="username">Username</label>
-                    <input id="username" type="text" name="username" value={usr} onChange={handleChange} />
+                    <label htmlFor="invitation">Invtitation Code</label>
+                    <input id="invitation" type="text" name="invitation" value={invitation} onChange={handleChange} />
                 </div>
                 <div>
-                    <label htmlFor="password">Password</label>
-                    <input id="password" type="text" name="password" value={password} onChange={handleChange} />
+                    <label htmlFor="username">Username</label>
+                    <input id="username" type="text" name="username" value={usr} onChange={handleChange} />
                 </div>
                 <div>
                     <label htmlFor="email">Email</label>
                     <input id="email" type="text" name="email" value={email} onChange={handleChange} />
                 </div>
                 <div>
-                    <label htmlFor="invitation">Invitation</label>
-                    <input id="invitation" type="text" name="invitation" value={invitation} onChange={handleChange} />
+                    <label htmlFor="password">Password</label>
+                    <input id="password" type="text" name="password" value={password} onChange={handleChange} />
                 </div>
                 <div>
                     <button type="submit">Register</button>
@@ -76,14 +84,14 @@ function reduce(state: State, action: Action): State {
         case 'submitting':
             switch (action.type) {
                 case "success": return { tag: 'redirect' }
-                case "error": return { tag: 'editing', error: action.message, inputs: { username: "", password: "", email : "", invitation : ""} }
+                case "error": return { tag: 'editing', error: action.message, inputs: { invitation: "", username: "",email: "", password: "" } }
             }
         case 'redirect':
             throw Error("Already in final State 'redirect' and should not reduce to any other State.")
     }
 }
 
-type State = { tag: 'editing'; error?: string, inputs: { username: string, password: string , email : string, invitation : string}; }
+type State = { tag: 'editing'; error?: string, inputs: { invitation: string, username: string, email : string, password: string }; }
     | { tag: 'submitting' }
     | { tag: 'redirect' }
 
@@ -96,16 +104,26 @@ type Action = { type: "edit", inputName: string, inputValue: string }
  * Auxiliary Functions emulating authenticate
  */
 
-function delay(delayInMs: number) {
-    return new Promise(resolve => {
-        setTimeout(() => resolve(undefined), delayInMs);
-    });
-}
+async function registerFetch( invitation : String, username: string, email : String, password: string): Promise<true | undefined> {
+    try {
+        const response = await fetch("/user/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                invitation : invitation,
+                name: username,
+                email : email,
+                password: password
+            }),
+        });
 
-async function registerConfirm(username : string, password : string , email : string, invitation : string): Promise<true | undefined> {
-    await delay(1000);
-    if ((username == 'roger' || username == 'bob') && password == 'schmidt') {
-        return true;
+        if (!response.ok) {
+            throw new Error("Failed to authenticate");
+        }
+
+        return true
+    } catch (error) {
+        console.error("Error during authentication:", error);
+        return undefined;
     }
-    return undefined;
 }
