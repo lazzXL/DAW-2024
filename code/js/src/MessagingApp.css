@@ -20,7 +20,6 @@ html, body {
     justify-content: center;
     align-items: center;
 }
-
 .modal-content {
     background: white;
     padding: 20px;
@@ -28,7 +27,6 @@ html, body {
     width: 300px;
     text-align: center;
 }
-
 .close-button {
     position: absolute;
     top: 10px;
@@ -38,11 +36,9 @@ html, body {
     font-size: 20px;
     cursor: pointer;
 }
-
 .modal-actions {
     margin-top: 20px;
 }
-
 .confirm-button, .cancel-button {
     padding: 10px 20px;
     margin: 5px;
@@ -50,12 +46,10 @@ html, body {
     border-radius: 4px;
     cursor: pointer;
 }
-
 .confirm-button {
     background-color: #c0392b;
     color: white;
 }
-
 .cancel-button {
     background-color: #007bff;
     color: white;
@@ -325,30 +319,57 @@ html, body {
     max-height: 100vh;
 }
 
-.channel-list-header {
+.channel-list-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
     border-bottom: 1px solid #6c7d89;
-    font-weight: bold;
     background-color: #ECF0F1;
     position: sticky;
     top: 0;
     z-index: 1;
 }
 
+.channel-list-header {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2C3E50;
+}
+
+.join-channel-button {
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.join-channel-button:hover {
+    background-color: #27ae60;
+}
+
 .channel-list-item {
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #BDC3C7;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
+    color: #2C3E50;
 }
 
 .channel-list-item:hover {
-    background-color: #BDC3C7;
+    background-color: #D5DBDB;
 }
 
 .channel-list-item.active {
     background-color: #BDC3C7;
+    color: #2C3E50;
+    font-weight: bold;
 }
+
 
 .message-panel {
     display: flex;
@@ -598,4 +619,119 @@ body.modal-open {
 .details-button:focus {
     outline: none;
     box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+
+
+/* General Container */
+.registration-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 400px;
+    margin: auto;
+    min-height: 100vh; /* Vertically center */
+    background-color: transparent;
+    text-align: center;
+}
+
+/* Code Container */
+.code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.code-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.code-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.code-text {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: rgba(233, 236, 239, 0.7); /* Subtle translucent background */
+}
+
+.code-placeholder {
+    font-size: 1rem;
+    color: #999;
+    font-style: italic;
+}
+
+/* Button Styles */
+.btn-fetch-code, .btn-copy-code {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-fetch-code:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.btn-fetch-code:hover:not(:disabled), .btn-copy-code:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-copy-code {
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    font-size: 0.9rem;
+}
+
+.btn-copy-code:hover {
+    background-color: #218838;
+}
+
+.btn-copy-code:disabled {
+    background-color: #999;
+}
+
+/* Error Message */
+.code-error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+    .registration-code-container {
+        padding: 1.5rem;
+        width: 90%;
+    }
+
+    .btn-fetch-code, .btn-copy-code {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .code-text {
+        font-size: 0.9rem;
+    }
 }

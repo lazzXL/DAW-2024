@@ -14,6 +14,11 @@ export function Sidebar() {
                     🧭
                 </Link>
             </button>
+            <button>
+                <Link to="/generate-registration-invitation" style={{ textDecoration: "none", color: "inherit" }}>
+                    ✉
+                </Link>
+            </button>
             <div className="spacer"></div>
             <button>
                 <Link to="/settings" style={{ textDecoration: "none", color: "inherit" }}>
