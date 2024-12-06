@@ -735,3 +735,89 @@ body.modal-open {
         font-size: 0.9rem;
     }
 }
+
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+    background-color: #f4f4f9; /* Optional background */
+}
+
+
+.create-channel-form {
+    max-width: 500px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Optional for responsiveness */
+}
+
+
+.create-channel-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.create-channel-field {
+    margin-bottom: 20px;
+}
+
+.create-channel-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.create-channel-input,
+.create-channel-select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.create-channel-input:focus,
+.create-channel-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.create-channel-actions {
+    text-align: center;
+}
+
+.create-channel-submit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.create-channel-submit-button:hover {
+    background-color: #0056b3;
+}
+
+.create-channel-submit-button:active {
+    transform: scale(0.98);
+}
+
+.create-channel-error {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 20px;
+    text-align: center;
+}

@@ -10,6 +10,7 @@ import { Login } from "./login";
 import { Register } from "./register";
 import { RegistrationCode } from "./components/RegistrationCodeGen";
 import { JoinPrivateChannel } from "./components/JoinPrivateChannel";
+import { CreateChannel } from "./components/CreateChannelForm";
 
 export const router = createBrowserRouter([
     {
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
             { path: "/discover-channels", element: <DiscoverPublic /> },
             { path: "/generate-registration-invitation", element: <RegistrationCode /> },
             { path: "/join-priv-channel", element: <JoinPrivateChannel /> },
+            { path: "/create-channel", element: <CreateChannel /> },
         ],
     },
     {
