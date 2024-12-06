@@ -3,9 +3,11 @@ package pt.isel.http_api
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import pt.isel.*
 import pt.isel.http_api.model.SendMessageInput
 import pt.isel.http_api.model.handleMessageFailure
+import java.util.concurrent.TimeUnit
 
 /**
  * REST controller for the messages.
@@ -20,6 +22,7 @@ class MessageController(
 
     @PostMapping("/send")
     fun sendMessage(@RequestBody messageInput: SendMessageInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Message> {
+        println("MESSAGE SENT REQUEST RECEIVED\n" + messageInput.toString() + "\n")
         return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, /*messageInput.date,*/ messageInput.channelId, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleMessageFailure(result.value)
@@ -31,6 +34,20 @@ class MessageController(
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }
+    }
+
+    @GetMapping("/{channelId}/listen")
+    fun listen(
+        @PathVariable channelId: UInt,
+    ): SseEmitter {
+        val sseEmitter = SseEmitter(TimeUnit.HOURS.toMillis(1))
+        messageService.addEmitter(
+            channelId,
+            SseUpdatedTimeSlotEmitterAdapter(
+                sseEmitter,
+            ),
+        )
+        return sseEmitter
     }
 
 }

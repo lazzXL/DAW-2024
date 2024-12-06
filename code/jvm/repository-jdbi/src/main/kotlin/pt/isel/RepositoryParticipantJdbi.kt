@@ -29,6 +29,22 @@ class RepositoryParticipantJdbi(
         return Participant(id.toUInt(), user, channel, permission )
     }
 
+    override fun getParticipantsFromChannel(channelId: UInt): List<Participant> =
+        handle
+            .createQuery(
+                """
+                SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
+                u.name as user_name, u.email, u.password
+                FROM dbo.participants p
+                JOIN dbo.users u ON p.user_id = u.id
+                JOIN dbo.channels c ON p.channel_id = c.id
+                WHERE p.channel_id = :channelId
+                """,
+            ).bind("channelId", channelId.toInt())
+            .map { rs, _ -> mapRowToParticipant(rs) }
+            .list()
+
+
     override fun isParticipant(channelId: UInt, userId: UInt): Participant? =
         handle
             .createQuery(

@@ -20,6 +20,8 @@ repositories {
 dependencies {
 	implementation(project(":services"))
 	implementation("org.springframework:spring-webmvc:6.1.13")
+	implementation("org.slf4j:slf4j-api:2.0.16")
+
 	/*
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

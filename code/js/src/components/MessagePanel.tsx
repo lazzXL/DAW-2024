@@ -2,162 +2,298 @@ import * as React from "react";
 import { fetchMessages, Message } from "../fakeApiService";
 import { Channel } from "../domain/Channel";
 import { AuthContext } from "../AuthProvider";
+import { ChannelDetailsModal } from "./ChannelDetails";
+
+export type Participant = {
+    id: string;
+    name: string;
+    permission: string;
+};
+
+type MessageInput = {
+    content: string;
+    channelId: number;
+};
 
 type MessagePanelState = {
     messages: Message[];
+    participants: Participant[];
     loading: boolean;
-    message: string;
     error: string | null;
+    message: string;
 };
 
 type Action =
-    | { type: "FETCH_MESSAGES_START" }
-    | { type: "FETCH_MESSAGES_SUCCESS"; payload: Message[] }
-    | { type: "FETCH_MESSAGES_ERROR"; payload: string }
+    | { type: "FETCH_START" }
+    | { type: "FETCH_SUCCESS"; payload: { messages: Message[]; participants: Participant[] } }
+    | { type: "FETCH_ERROR"; payload: string }
     | { type: "SEND_MESSAGE"; payload: Message }
+    | { type: "RECEIVE_MESSAGE"; payload: Message }
     | { type: "SET_MESSAGE"; payload: string }
-    | { type: "RESET_MESSAGES" };
+    | { type: "RESET" };
 
 function messagePanelReducer(state: MessagePanelState, action: Action): MessagePanelState {
     switch (action.type) {
-        case "FETCH_MESSAGES_START":
+        case "FETCH_START":
             return { ...state, loading: true, error: null };
-        case "FETCH_MESSAGES_SUCCESS":
-            return { ...state, messages: action.payload, loading: false };
-        case "FETCH_MESSAGES_ERROR":
+        case "FETCH_SUCCESS":
+            return {
+                ...state,
+                messages: action.payload.messages,
+                participants: action.payload.participants,
+                loading: false,
+            };
+        case "FETCH_ERROR":
             return { ...state, loading: false, error: action.payload };
         case "SEND_MESSAGE":
             return { ...state, messages: [...state.messages, action.payload], message: "" };
+        case "RECEIVE_MESSAGE":
+            return { ...state, messages: [...state.messages, action.payload] };
         case "SET_MESSAGE":
             return { ...state, message: action.payload };
-        case "RESET_MESSAGES":
-            return { ...state, messages: [], loading: false, error: null };
+        case "RESET":
+            return { messages: [], participants: [], loading: false, error: null, message: "" };
         default:
             return state;
     }
 }
 
 export function MessagePanel({ channel }: { channel: Channel | null }) {
-    const { token } = React.useContext(AuthContext);
-    const [state, dispatch] = React.useReducer(messagePanelReducer, {
+     const [state, dispatch] = React.useReducer(messagePanelReducer, {
         messages: [],
+        participants: [],
         loading: false,
-        message: "",
         error: null,
+        message: "",
     });
+    const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
+    const { token } = React.useContext(AuthContext);
 
-    React.useEffect(() => {
-        if (channel) {
-            dispatch({ type: "FETCH_MESSAGES_START" });
-            fetchMessages(channel.name)
-                .then((msgs) => {
-                    dispatch({ type: "FETCH_MESSAGES_SUCCESS", payload: msgs as Message[] });
-                })
-                .catch((error: string) => {
-                    dispatch({ type: "FETCH_MESSAGES_ERROR", payload: error });
-                });
-        } else {
-            dispatch({ type: "RESET_MESSAGES" });
-        }
-    }, [channel]);
-
-    const handleSendMessage = () => {
-        if (state.message.trim() && channel) {
-            const newMessage: Message = {
-                channel: channel.name,
-                sender: "You",
-                content: state.message.trim(),
-                timestamp: new Date().toLocaleString(),
-            };
-            dispatch({ type: "SEND_MESSAGE", payload: newMessage });
-        }
-    };
-
+    // Leave Channel Handler
     const handleLeaveChannel = () => {
         if (channel) {
-            fetch(`participant/leave/${channel.id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${token}` } })
+            fetch(`/participant/leave/${channel.id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            })
                 .then((response) => {
-                    if (response.ok) {
-                        alert("Successfully left channel");
-                        //Todo: Refresh when we have cookies support
-                    } else {
-                        throw new Error("Failed to leave channel");
-                    }
-                    dispatch({ type: "RESET_MESSAGES" });
+                    if (!response.ok) throw new Error("Failed to leave channel");
+                    alert("Successfully left channel");
+                    dispatch({ type: "RESET" });
                 })
-                .catch((error: string) => {
-                    dispatch({ type: "FETCH_MESSAGES_ERROR", payload: error });
+                .catch((error: Error) => {
+                    console.error("Error leaving channel:", error.message);
                 });
         }
     };
-        
-    
 
-    const handleRetry = () => {
-        if (channel) {
-            dispatch({ type: "FETCH_MESSAGES_START" });
-            fetchMessages(channel.name)
-                .then((msgs) => {
-                    dispatch({ type: "FETCH_MESSAGES_SUCCESS", payload: msgs as Message[] });
-                })
-                .catch((error: string) => {
-                    dispatch({ type: "FETCH_MESSAGES_ERROR", payload: error });
-                });
+    React.useEffect(() => {
+        if (!channel) {
+            dispatch({ type: "RESET" });
+            return;
         }
-    };
+
+        dispatch({ type: "FETCH_START" });
+
+        const fetchParticipants = fetch(`/participant/channel/${channel.id}`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+        }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch participants");
+            return response.json();
+        });
+
+        const fetchMessages = fetch(`/message/${channel.id}/`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+        }).then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch messages");
+            return response.json();
+        });
+
+        Promise.all([fetchParticipants, fetchMessages])
+            .then(([participantsData, messagesData]) => {
+                const participants = participantsData.map((participant: any) => ({
+                    id: participant.id,
+                    name: participant.user.name,
+                    permission: participant.permission,
+                }));
+
+                dispatch({
+                    type: "FETCH_SUCCESS",
+                    payload: { messages: messagesData, participants },
+                });
+            })
+            .catch((error: Error) => {
+                dispatch({ type: "FETCH_ERROR", payload: error.message });
+            });
+
+        const eventSource = new EventSource(`/message/${channel.id}/listen`);
+
+        eventSource.onmessage = (event) => {
+            const newMessage: Message = JSON.parse(event.data);
+            dispatch({ type: "RECEIVE_MESSAGE", payload: newMessage });
+        };
+
+        eventSource.onerror = () => {
+            console.error("Error with SSE connection.");
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, [channel, token]);
+
+    
 
     return (
         <div className="message-panel">
-            <div className="message-panel-header">
-                {channel?.name || "No Channel Selected"}
-                {channel && (
-                    <div className = "parent-container">
-                    <button className="leave-button" onClick={handleLeaveChannel}>
+            <MessagePanelHeader
+                channel={channel}
+                onDetailsClick={() => setIsDetailsOpen(true)}
+                onLeaveChannel={handleLeaveChannel}
+            />
+            <MessageList
+                messages={state.messages}
+                participants={state.participants}
+                loading={state.loading}
+                error={state.error}
+            />
+            {channel && (
+                <MessagePanelFooter
+                    message={state.message}
+                    onMessageChange={(msg) =>
+                        dispatch({ type: "SET_MESSAGE", payload: msg })
+                    }
+                    onSendMessage={() => {
+                        if (state.message.trim() && channel) {
+                            const newMessage: MessageInput = {
+                                content: state.message.trim(),
+                                channelId: channel.id,
+                            };
+                            fetch(`/message/send`, {
+                                method: "POST",
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(newMessage),
+                            })
+                                .then((response) => {
+                                    if (!response.ok)
+                                        throw new Error("Failed to send message");
+                                    return response.json();
+                                })
+                                .then((message) => {
+                                    dispatch({ type: "SEND_MESSAGE", payload: message });
+                                })
+                                .catch((error) =>
+                                    console.error("Error sending message:", error)
+                                );
+                        }
+                    }}
+                />
+            )}
+            {isDetailsOpen && channel && (
+                <ChannelDetailsModal
+                    channelName={channel.name}
+                    channelDescription={channel.description || ""}
+                    participants={state.participants}
+                    onClose={() => setIsDetailsOpen(false)}
+                />
+            )}
+        </div>
+    );
+}
+
+function MessagePanelHeader({ channel, onDetailsClick, onLeaveChannel }: { channel: Channel | null; onDetailsClick: () => void; onLeaveChannel: () => void }) {
+    return (
+        <div className="message-panel-header">
+            <span className="channel-title">{channel?.name || "No Channel Selected"}</span>
+            {channel && (
+                <div className="header-actions">
+                    <button onClick={onLeaveChannel} className="leave-button">
                         Leave
                     </button>
-                    </div>
-                )}
-            </div>
-            
-            <div className="message-panel-messages">
-                {state.loading ? (
-                    <p>Loading messages...</p>
-                ) : state.error ? (
-                    <div>
-                        <p>{state.error}</p>
-                        <button onClick={handleRetry}>Retry</button>
-                    </div>
-                ) : channel ? (
-                    state.messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`message-bubble ${msg.sender === "You" ? "sent" : "received"}`}
-                        >
-                            <div className="message-info">
-                                <span className="message-sender">{msg.sender}</span>
-                                <span className="message-timestamp">{msg.timestamp}</span>
-                            </div>
-                            <div className="message-content">{msg.content}</div>
-                        </div>
-                    ))
-                ) : (
-                    <p>Select a channel to view messages</p>
-                )}
-            </div>
-            {!state.loading && !state.error && channel && (
-                <div className="message-panel-footer">
-                    <input
-                        type="text"
-                        value={state.message}
-                        onChange={(e) => dispatch({ type: "SET_MESSAGE", payload: e.target.value })}
-                        placeholder="Type a message..."
-                        disabled={state.loading}
-                    />
-                    <button onClick={handleSendMessage} disabled={state.loading || !state.message.trim()}>
-                        Send
+                    <button onClick={onDetailsClick} className="details-button">
+                        Channel Details
                     </button>
                 </div>
             )}
+        </div>
+    );
+}
+
+function MessageList({
+    messages,
+    participants,
+    loading,
+    error,
+}: {
+    messages: Message[];
+    participants: Participant[];
+    loading: boolean;
+    error: string | null;
+}) {
+    const getSenderName = (senderId: string) => {
+        const participant = participants.find((p) => p.id === senderId);
+        return participant ? participant.name : "Unknown";
+    };
+
+    if (loading) {
+        return (
+            <div className="message-panel-messages loading">
+                <p>Loading...</p>
+            </div>
+        );
+    }
+    if (error) return <p>Error: {error}</p>;
+    if (!messages.length)
+        return (
+            <div className="message-panel-messages">
+                <p>No messages yet.</p>
+            </div>
+        );
+
+    return (
+        <div className="message-panel-messages">
+            {messages.map((msg, index) => (
+                <div
+                    key={index}
+                    className={`message-bubble ${msg.sender === "You" ? "sent" : "received"}`}
+                >
+                    <div className="message-info">
+                        <span className="message-sender">{getSenderName(msg.sender)}</span>
+                        <span className="message-timestamp">{msg.timestamp}</span>
+                    </div>
+                    <div className="message-content">{msg.content}</div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function MessagePanelFooter({
+    message,
+    onMessageChange,
+    onSendMessage,
+}: {
+    message: string;
+    onMessageChange: (msg: string) => void;
+    onSendMessage: () => void;
+}) {
+    return (
+        <div className="message-panel-footer">
+            <input
+                type="text"
+                value={message}
+                onChange={(e) => onMessageChange(e.target.value)}
+                placeholder="Type a message..."
+            />
+            <button onClick={onSendMessage} disabled={!message.trim()}>
+                Send
+            </button>
         </div>
     );
 }

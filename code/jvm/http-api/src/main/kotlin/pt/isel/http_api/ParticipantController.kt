@@ -57,4 +57,12 @@ class ParticipantController(
             is Failure -> handleParticipantFailure(result.value)
         }
     }
+
+    @GetMapping("/channel/{channelId}")
+    fun getParticipantsFromChannel(@PathVariable channelId : UInt, authenticatedUser: AuthenticatedUser): ResponseEntity<Any> {
+        return when (val result: Either<ParticipantError, List<Participant>> = participantServices.getParticipantsFromChannel(channelId,authenticatedUser.user.id)) {
+            is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
+            is Failure -> handleParticipantFailure(result.value)
+        }
+    }
 }

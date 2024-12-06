@@ -4,12 +4,13 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.*
 import pt.isel.mem.TransactionManagerInMem
+import pt.isel.temp.BCryptPasswordEncoder
+import pt.isel.temp.Sha256TokenEncoder
+import pt.isel.temp.UsersDomain
+import pt.isel.temp.UsersDomainConfig
 import java.util.*
 import java.util.stream.Stream
-import javax.security.auth.login.FailedLoginException
-import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes

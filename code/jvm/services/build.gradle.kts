@@ -14,9 +14,15 @@ repositories {
 dependencies {
     api(project(":repository"))
     api(project(":domain"))
+
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.1")
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+
+    implementation("org.slf4j:slf4j-api:2.0.16")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     testImplementation(project(":repository-jdbi"))
