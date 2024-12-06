@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { json, Navigate, useLocation } from 'react-router-dom';
+import { json, Link, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './AuthProvider';
 
 /***********************
@@ -80,7 +80,7 @@ export function Login() {
                 </fieldset>
             </form>
             <div className="register-container">
-                <button className="btn-register" onClick={() => alert("Navigate to register page")}>
+                <button className="btn-register" onClick={() => <Navigate to="/Register"/>}>
                     Register
                 </button>
             </div>

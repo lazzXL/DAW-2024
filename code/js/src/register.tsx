@@ -43,30 +43,80 @@ export function Register() {
     
     
     return (
-        <form onSubmit={handleSubmit}>
-            <fieldset disabled={state.tag !== 'editing'}>
-                <div>
-                    <label htmlFor="invitation">Invtitation Code</label>
-                    <input id="invitation" type="text" name="invitation" value={invitation} onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input id="username" type="text" name="username" value={usr} onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input id="email" type="text" name="email" value={email} onChange={handleChange} />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input id="password" type="text" name="password" value={password} onChange={handleChange} />
-                </div>
-                <div>
-                    <button type="submit">Register</button>
-                </div>
-            </fieldset>
-            {state.tag === 'editing' && state.error}
-        </form>
+        <div>
+
+        <div className="login-container">
+            <div className="logo-container">
+                <img src="chimp.png" alt="App Logo" className="app-logo" />
+                <h1 className="logo-text">ChIMP</h1>
+            </div>
+            <form onSubmit={handleSubmit} className="login-form">
+                <fieldset disabled={state.tag !== 'editing'} className="form-fieldset">
+                    <div className="form-group">
+                        <label htmlFor="invitation" className="form-label">Invitation Code</label>
+                        <input 
+                            id="invitation" 
+                            type="text" 
+                            name="invitation" 
+                            value={invitation} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your invitation code"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="username" className="form-label">Username</label>
+                        <input 
+                            id="username" 
+                            type="text" 
+                            name="username" 
+                            value={usr} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your username"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input 
+                            id="email" 
+                            type="text" 
+                            name="email" 
+                            value={email} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your email"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password" className="form-label">Password</label>
+                        <input 
+                            id="password" 
+                            type="password" 
+                            name="password" 
+                            value={password} 
+                            onChange={handleChange} 
+                            className="form-input" 
+                            placeholder="Enter your password"
+                        />
+                    </div>
+                    {state.tag === 'editing' && state.error && (
+                        <div className="error-message">{state.error}</div>
+                    )}
+                    <div className="form-actions">
+                        <button type="submit" className="btn-submit">Register</button>
+                    </div>
+
+                    <div className="register-container">
+                        <button type="button" className="btn-register" onClick={() => <Navigate to="/Login"/>}>
+                            Login
+                        </button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
     );
 }
 
