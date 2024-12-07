@@ -7,6 +7,7 @@ import { LeaveChannelModal } from "./LeaveChannelScreen";
 
 export type Participant = {
     id: string;
+    userId : number;
     name: string;
     permission: string;
 };
@@ -115,6 +116,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
             .then(([participantsData, messagesData]) => {
                 const participants = participantsData.map((participant: any) => ({
                     id: participant.id,
+                    userId: participant.user.id,
                     name: participant.user.name,
                     permission: participant.permission,
                 }));
@@ -213,8 +215,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
             )}
             {isDetailsOpen && channel && (
                 <ChannelDetailsModal
-                    channelName={channel.name}
-                    channelDescription={channel.description || ""}
+                    channel={channel}
                     participants={state.participants}
                     onClose={() => setIsDetailsOpen(false)}
                 />

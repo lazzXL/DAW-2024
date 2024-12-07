@@ -15,7 +15,6 @@ import pt.isel.http_api.model.handleParticipantFailure
 class ChannelInvitationController(
     private val invitationService: ChannelInvitationServices
 ) {
-    //TODO: CAN ALL USERS INVITE WITH READ_WRITE? PROBLEM; DELETE INVITATION MISSING
     @PostMapping("/create") // Verified
     fun createInvitation(@RequestBody invitationInput: CreateInvitationInput, authenticatedUser: AuthenticatedUser): ResponseEntity<ChannelInvitation> {
         return when (val result: Either<ChannelInvitationError, ChannelInvitation> = invitationService.createInvitation(invitationInput.channelID, invitationInput.permission, authenticatedUser.user.id)) {

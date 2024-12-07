@@ -42,7 +42,7 @@ export function JoinPrivateChannel() {
             dispatch({ type: 'success' });
 
         } catch (error) {
-            console.error("Error during authentication:", error);
+            dispatch({ type: 'error' , message : "Invalid Code"});
             return undefined;
         }
     }

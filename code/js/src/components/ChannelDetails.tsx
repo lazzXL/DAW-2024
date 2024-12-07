@@ -1,20 +1,22 @@
 import * as React from "react";
 import { Participant } from "./MessagePanel"; 
+import { Channel } from "../domain/Channel";
+import { RegistrationCode } from "./RegistrationCodeGen";
+import { ChannelInvitation } from "./ChannelInvitationGen";
 
 type ChannelDetailsModalProps = {
-    channelName: string;
-    channelDescription: string;
+    channel: Channel;
     participants: Participant[];
     onClose: () => void;
 };
 
 export function ChannelDetailsModal({
-    channelName,
-    channelDescription,
+    channel,
     participants,
     onClose,
 }: ChannelDetailsModalProps) {
     const [isExpanded, setIsExpanded] = React.useState(false);
+    const name = sessionStorage.getItem("username")
 
     return (
         <div className="modal-overlay">
@@ -25,12 +27,18 @@ export function ChannelDetailsModal({
                 <h2>Channel Details</h2>
                 <div className="channel-details-info">
                     <p>
-                        <strong>Channel Name:</strong> {channelName}
+                        <strong>Channel Name:</strong> {channel.name}
                     </p>
                     <p>
-                        <strong>Description:</strong> {channelDescription || "No description provided."}
+                        <strong>Description:</strong> {channel.description || "No description provided."}
                     </p>
                 </div>
+                { 
+                    participants.find( it =>  it.userId == channel.adminID).name == name &&(
+                        <ChannelInvitation
+                            channelId = {channel.id}
+                        />
+                    )}
                 <div className="participants-section">
                     <p>
                         <strong>Participants:</strong> {participants.length}
@@ -42,17 +50,19 @@ export function ChannelDetailsModal({
                         {isExpanded ? "Hide Participants" : "Show Participants"}
                     </button>
                     {isExpanded && (
-                        <ul className="participants-list">
-                            {participants.map((participant) => (
-                                <li key={participant.id} className="participant-item">
-                                    <span className="participant-name">{participant.name}</span>
-                                    <span className="participant-permission">
-                                        {participant.permission.replace("_", " ")}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+    <div className="participants-list-scrollable">
+        <ul className="participants-list">
+            {participants.map((participant) => (
+                <li key={participant.id} className="participant-item">
+                    <span className="participant-name">{participant.name}</span>
+                    <span className="participant-permission">
+                        {participant.permission.replace("_", " ")}
+                    </span>
+                </li>
+            ))}
+        </ul>
+    </div>
+)}
                 </div>
             </div>
         </div>
