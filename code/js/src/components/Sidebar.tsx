@@ -20,9 +20,13 @@ export function Sidebar() {
                 </Link>
             </button>
             <button>
-                <Link to="/create-channel" style={{ textDecoration: "none", color: "inherit" }}>
-                    👨‍🦲
-                </Link>
+            <Link to="/create-channel" style={{ textDecoration: "none", color: "inherit" }}>
+                <img 
+                    src="newChannel.png" 
+                    alt="New Channel" 
+                    style={{ cursor: "pointer", width: "20px", height: "20px" }}
+                />
+            </Link>
             </button>
             <div className="spacer"></div>
             <button>

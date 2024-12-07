@@ -48,7 +48,7 @@ function messagePanelReducer(state: MessagePanelState, action: Action): MessageP
         case "FETCH_ERROR":
             return { ...state, loading: false, error: action.payload };
         case "SEND_MESSAGE":
-            return { ...state, messages: [...state.messages, action.payload], message: "" };
+            return { ...state, message: "" };
         case "RECEIVE_MESSAGE":
             return { ...state, messages: [...state.messages, action.payload] };
         case "SET_MESSAGE":
@@ -121,21 +121,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
                     permission: participant.permission,
                 }));
 
-                const messages = messagesData.map((message: any) => ({
-                    id: message.id,
-                    content: message.content,
-                    sender: message.sender,
-                    timestamp: new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false,
-                    }).format(new Date(message.date)),
-                }));
-
+                const messages = messagesData.map((message: any) => formattMessage(message));
                 dispatch({
                     type: "FETCH_SUCCESS",
                     payload: { messages, participants },
@@ -148,8 +134,8 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
         const eventSource = new EventSource(`/message/${channel.id}/listen`);
 
         eventSource.onmessage = (event) => {
-            const newMessage: Message = JSON.parse(event.data);
-            dispatch({ type: "RECEIVE_MESSAGE", payload: newMessage });
+            const newMessage = JSON.parse(event.data);
+            dispatch({ type: "RECEIVE_MESSAGE", payload: formattMessage(newMessage) });
         };
 
         eventSource.onerror = () => {
@@ -204,7 +190,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
                                     return response.json();
                                 })
                                 .then((message) => {
-                                    dispatch({ type: "SEND_MESSAGE", payload: message });
+                                    dispatch({ type: "SEND_MESSAGE", payload: formattMessage(message) });
                                 })
                                 .catch((error) =>
                                     console.error("Error sending message:", error)
@@ -266,7 +252,7 @@ function MessageList({
         const participant = participants.find((p) => p.id === senderId);
         return participant ? participant.name : "Unknown";
     };
-    messages.forEach(it=> console.log(it.content + "  " + it.timestamp))
+
     if (loading) {
         return (
             <div className="message-panel-messages loading">
@@ -322,4 +308,21 @@ function MessagePanelFooter({
             </button>
         </div>
     );
+}
+
+function formattMessage(newMessage : any ) : Message{
+    return {
+        id: newMessage.id,
+        content: newMessage.content,
+        sender: newMessage.sender,
+        timestamp: new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        }).format(new Date(newMessage.date))
+    }
 }

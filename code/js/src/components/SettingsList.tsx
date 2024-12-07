@@ -19,9 +19,6 @@ export function SettingsList() {
                 <div className="settings-item" onClick={handleAccountInformation}>
                     {"Account Information"}
                 </div>
-                <div className="settings-item" onClick={() => setCurrentView('CreateInvitation')}>
-                    {"Create An Invitation"}
-                </div>
                 <div className="settings-item" onClick={() => setCurrentView('AboutAuthors')}>
                     {"About Authors"}
                 </div>

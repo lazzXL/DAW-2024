@@ -49,7 +49,7 @@ class MessageServices(
         requireNotNull(ch)
         logger.info("adding listener")
         val oldListeners = listeners.getOrDefault(channelId, emptyList())
-        listeners.putIfAbsent(channelId, oldListeners + listener)
+        listeners[channelId] = oldListeners + listener
         listener.onCompletion {
             logger.info("onCompletion")
             removeEmitter(channelId, listener)

@@ -25,12 +25,11 @@ export function Login() {
         dispatch({ type: "submit" })
         const { username, password } = state.inputs
         authenticate(username, password)
-            .then(res => { 
-                console.log(res)
+            .then(res => {
                 if(res) { setToken(res) }
                 dispatch( res
                     ? {type: "success"}
-                    : {type: "error", message: `Invalid username or password: ${username} or ${password}`}
+                    : {type: "error", message: `Invalid username or password`}
             )})
             .catch(err => dispatch({type: "error", message: err.message}))
     }

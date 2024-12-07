@@ -25,7 +25,6 @@ export function ChannelList({ selectedChannel, onSelectChannel }: ChannelListPro
             }
         })
             .then((response) => {
-                console.log("THEN" + response)
                 if (!response.ok) {
                     throw new Error("Failed to fetch channels");
                 }
