@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import PublicChannelList from './PublicChannelList';
 import { AuthContext } from '../AuthProvider';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface PublicChannel {
     id: number;
@@ -11,6 +11,7 @@ interface PublicChannel {
 }
 
 export function DisplayPublicChannels() {
+    const navigate = useNavigate();
     const setChannels = useState<PublicChannel[]>([]);
 
     const { token } = React.useContext(AuthContext);
@@ -27,7 +28,7 @@ export function DisplayPublicChannels() {
             switch (response.status) {
             case 200:
                 alert('Successfully joined channel');
-                return <Navigate to={"/"} />
+                return navigate("/")
             case 409:
                 alert('Already joined channel');
                 break;

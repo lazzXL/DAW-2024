@@ -25,10 +25,8 @@ export function SettingsList() {
                 <div className="settings-item" onClick={() => setCurrentView('AboutAuthors')}>
                     {"About Authors"}
                 </div>
-                <div className="settings-item" onClick={() => setCurrentView('DarkMode')}>
-                    {"Dark Mode"}
-                </div>
             </div>
+            
             
             
             {currentView === 'ProfileInfo' && <ProfileInfo />}
@@ -37,12 +35,6 @@ export function SettingsList() {
     );
 }
 
-
-
-
-function createInvitation(){
-
-}
 
 export function AboutAuthors() {
     return (
@@ -73,7 +65,4 @@ function author(
 
 );}
 
-function darkMode(){
-    console.log("DarkMode")
-}
 

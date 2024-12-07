@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { json, Navigate, useLocation } from 'react-router-dom';
+import { json, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthProvider';
 
 /***********************
@@ -7,6 +7,7 @@ import { AuthContext } from './AuthProvider';
  */
 export function Register() {
     const location = useLocation()
+    const navigate = useNavigate();
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
             invitation : "",
@@ -35,6 +36,10 @@ export function Register() {
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         dispatch({ type: "edit", inputName: event.target.name, inputValue: event.target.value })
+    }
+
+    function handleLoginRedirect() {
+        navigate("/login"); 
     }
     const invitation = state.tag === "editing" ? state.inputs.invitation : ""
     const usr = state.tag === "editing" ? state.inputs.username : ""
@@ -108,7 +113,7 @@ export function Register() {
                     </div>
 
                     <div className="register-container">
-                        <button type="button" className="btn-register" onClick={() => <Navigate to="/Login"/>}>
+                        <button type="button" className="btn-register" onClick={handleLoginRedirect}>
                             Login
                         </button>
                     </div>

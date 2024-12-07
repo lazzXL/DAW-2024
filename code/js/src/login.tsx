@@ -39,7 +39,7 @@ export function Login() {
         dispatch({ type: "edit", inputName: event.target.name, inputValue: event.target.value })
     }
 
-    function handleRegister() {
+    function handleRegisterRedirect() {
         navigate("/register"); 
     }
 
@@ -87,7 +87,7 @@ export function Login() {
                 </fieldset>
             </form>
             <div className="register-container">
-                <button className="btn-register" onClick={handleRegister}>
+                <button className="btn-register" onClick={handleRegisterRedirect}>
                     Register
                 </button>
             </div>
