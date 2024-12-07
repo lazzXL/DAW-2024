@@ -2,10 +2,7 @@ package pt.isel.http_api
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import pt.isel.*
 import pt.isel.http_api.model.LoginInput
 import pt.isel.http_api.model.LoginOutput
@@ -58,5 +55,10 @@ class UserController(
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleUserFailure(result.value)
         }
+    }
+
+    @GetMapping("/findByToken")
+    fun findByToken(authenticatedUser: AuthenticatedUser) : ResponseEntity<User> {
+        return ResponseEntity.status(HttpStatus.OK).body(authenticatedUser.user)
     }
 }
