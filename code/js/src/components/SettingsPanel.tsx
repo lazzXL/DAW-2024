@@ -1,5 +1,4 @@
 import * as React from "react";
-import { fetchMessages, Message } from "../fakeApiService";
 
 type SettingPanelProps = {
     setting: string;

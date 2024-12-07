@@ -1,5 +1,5 @@
 import * as React from "react";
-import { fetchMessages, Message } from "../fakeApiService";
+import { Message } from "../fakeApiService";
 import { Channel } from "../domain/Channel";
 import { AuthContext } from "../AuthProvider";
 import { ChannelDetailsModal } from "./ChannelDetails";
@@ -119,9 +119,24 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
                     permission: participant.permission,
                 }));
 
+                const messages = messagesData.map((message: any) => ({
+                    id: message.id,
+                    content: message.content,
+                    sender: message.sender,
+                    timestamp: new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                    }).format(new Date(message.date)),
+                }));
+
                 dispatch({
                     type: "FETCH_SUCCESS",
-                    payload: { messages: messagesData, participants },
+                    payload: { messages, participants },
                 });
             })
             .catch((error: Error) => {
@@ -146,7 +161,8 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
     }, [channel, token]);
 
     
-
+    const name = sessionStorage.getItem("username")
+    
     return (
         <div className="message-panel">
             <MessagePanelHeader
@@ -160,7 +176,7 @@ export function MessagePanel({ channel }: { channel: Channel | null }) {
                 loading={state.loading}
                 error={state.error}
             />
-            {channel && (
+            {channel && name && state && state.participants && state.participants.find(it => it.name == name)?.permission == "READ_WRITE"  && (
                 <MessagePanelFooter
                     message={state.message}
                     onMessageChange={(msg) =>
@@ -249,7 +265,7 @@ function MessageList({
         const participant = participants.find((p) => p.id === senderId);
         return participant ? participant.name : "Unknown";
     };
-
+    messages.forEach(it=> console.log(it.content + "  " + it.timestamp))
     if (loading) {
         return (
             <div className="message-panel-messages loading">

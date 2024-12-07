@@ -1,7 +1,7 @@
 import { Channel } from "./domain/Channel";
 
 export type Message = {
-    channel: string;
+    id: string;
     sender: string;
     content: string;
     timestamp: string;
@@ -29,14 +29,14 @@ const fakeChannels: Channel[] = [
     { id: 19, name: "R&D", adminID: 119, description: "Research and development topics.", visibility: "PRIVATE" },
     { id: 20, name: "Social", adminID: 120, description: "Non-work-related social chat.", visibility: "PUBLIC" },
 ];
-
+/*
 const fakeMessages: Message[] = [
     { channel: "General", sender: "Alice", content: "Hello!", timestamp: "2024-11-21 10:00 AM" },
     { channel: "General", sender: "Bob", content: "Hi there!", timestamp: "2024-11-21 10:05 AM" },
     { channel: "Support", sender: "SupportBot", content: "How can I assist you?", timestamp: "2024-11-21 9:50 AM" },
     { channel: "Random", sender: "Charlie", content: "Did you watch the game?", timestamp: "2024-11-20 8:30 PM" },
 ];
-
+*/
 
 
 
@@ -45,11 +45,11 @@ export const fetchChannels = (): Promise<Channel[]> => {
         setTimeout(() => resolve(fakeChannels), 4000); 
     });
 };
-
+/*
 export const fetchMessages = (channel: string): Promise<Message[]> => {
     return new Promise((resolve) => {
         setTimeout(() => resolve(fakeMessages.filter((msg) => msg.channel === channel)), 1000); // Simulate 1-second delay
     });
-};
+};*/
 
 

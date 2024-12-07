@@ -151,6 +151,7 @@ async function authenticate(username: string, password: string): Promise<string 
         }
 
         const data = await response.json();
+        sessionStorage.setItem("username", username);
         return data.token;
     } catch (error) {
         console.error("Error during authentication:", error);
