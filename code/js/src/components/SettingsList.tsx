@@ -1,7 +1,11 @@
 import * as React from "react";
 import { ProfileInfo } from "./Profile";
+import { AuthContext } from "../AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 export function SettingsList() {
+    const {setToken} = React.useContext(AuthContext);
+    const navigate = useNavigate();
     const [currentView, setCurrentView] = React.useState(null);
 
     return (
@@ -12,6 +16,12 @@ export function SettingsList() {
                 </div>
                 <div className="settings-item" onClick={() => setCurrentView('AboutAuthors')}>
                     {"About Authors"}
+                </div>
+                <div className="settings-item" onClick={() => {
+                    setToken(undefined);
+                    navigate("/login");
+                }}>
+                    {"Logout"}
                 </div>
             </div>
             
