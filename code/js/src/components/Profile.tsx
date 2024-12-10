@@ -1,21 +1,7 @@
 import * as React from "react";
 import { AuthContext } from "../AuthProvider";
 
-interface ProfileProps {
-    username: string;
-    email: string;
-    joinedDate: string;
-    bio?: string;
-    avatarUrl?: string;
-}
-
-type User = {
-    name : String,
-    email : String,
-    password : String
-};
-
-function getUser(token : String) {
+async function getUser(token : String) {
     return fetch("/user/findByToken", {
         method: "GET",
         headers: {
@@ -30,14 +16,14 @@ function getUser(token : String) {
         })
         .catch((error) => {
             console.error(error);
-            return null; // Return null if an error occurs
+            return null;
         });
 }
 
 export function ProfileInfo() {
     const { token } = React.useContext(AuthContext);
-    const [user, setUser] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
+    const [ user, setUser] = React.useState(null);
+    const [ loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         getUser(token).then((userData) => {

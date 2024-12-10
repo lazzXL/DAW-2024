@@ -672,9 +672,6 @@ body.modal-open {
     box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
 }
 
-
-
-
 .registration-code-container {
     display: flex;
     flex-direction: column;

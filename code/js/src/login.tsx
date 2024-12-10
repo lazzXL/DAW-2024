@@ -2,9 +2,6 @@ import * as React from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthProvider';
 
-/***********************
- * RequireAuth Component
- */
 export function Login() {
     const location = useLocation()
     const navigate = useNavigate();
@@ -94,10 +91,6 @@ export function Login() {
     );
 }
 
-/***********************
- * REDUCER
- */
-
 function reduce(state: State, action: Action): State {
     switch (state.tag) {
         case 'editing':
@@ -123,10 +116,6 @@ type Action = { type: "edit", inputName: string, inputValue: string }
     | { type: "submit" }
     | { type: "success" }
     | { type: "error", message: string }
-
-/************************
- * Auxiliary Functions emulating authenticate
- */
 
 function delay(delayInMs: number) {
     return new Promise(resolve => {

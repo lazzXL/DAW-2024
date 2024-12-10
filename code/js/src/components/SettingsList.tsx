@@ -1,30 +1,21 @@
 import * as React from "react";
-import { AuthContext } from "../AuthProvider";
 import { ProfileInfo } from "./Profile";
 
 
 
 export function SettingsList() {
-    const { token } = React.useContext(AuthContext);
     const [currentView, setCurrentView] = React.useState(null);
-
-    const handleAccountInformation = () => {
-        setCurrentView('ProfileInfo');
-    };
-
-
+    
     return (
         <>
             <div className="settings-list">
-                <div className="settings-item" onClick={handleAccountInformation}>
+                <div className="settings-item" onClick={() => setCurrentView('ProfileInfo')}>
                     {"Account Information"}
                 </div>
                 <div className="settings-item" onClick={() => setCurrentView('AboutAuthors')}>
                     {"About Authors"}
                 </div>
             </div>
-            
-            
             
             {currentView === 'ProfileInfo' && <ProfileInfo />}
             {currentView === 'AboutAuthors' && <AboutAuthors />}

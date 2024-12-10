@@ -1,4 +1,3 @@
-
 export type Visibility = "PUBLIC" | "PRIVATE";
 
 export type Channel = {

@@ -1,14 +1,9 @@
 import * as React from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../AuthProvider';
 
 
-/***********************
- * RequireAuth Component
- */
 export function JoinPrivateChannel() {
-    const location = useLocation();
-    const navigate = useNavigate();
     const { token, setToken } = React.useContext(AuthContext);
 
     const [state, dispatch] = React.useReducer(reduce, {
@@ -91,9 +86,7 @@ export function JoinPrivateChannel() {
     );
 }
 
-/***********************
- * REDUCER
- */
+
 function reduce(state: State, action: Action): State {
     switch (state.tag) {
         case 'editing':
@@ -115,9 +108,7 @@ function reduce(state: State, action: Action): State {
     }
 }
 
-/***********************
- * Type Definitions
- */
+
 type State =
     | { tag: 'editing'; error?: string; inputs: { code: string } }
     | { tag: 'submitting' }
