@@ -1,5 +1,5 @@
 import { Message } from "../fakeApiService";
-import { Participant } from "../components/MessagePanel";
+import { Participant } from "./Participant";
 
 export type MessageInput = {
     content: string;

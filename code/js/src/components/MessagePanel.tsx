@@ -5,13 +5,7 @@ import { AuthContext } from "../AuthProvider";
 import { ChannelDetailsModal } from "./ChannelDetails";
 import { LeaveChannelModal } from "./LeaveChannelScreen";
 import { MessagePanelState, MessageInput } from "../domain/MessagePanelProps";
-
-export type Participant = {
-    id: string;
-    userId : number;
-    name: string;
-    permission: string;
-};
+import { Participant } from "../domain/Participant";
 
 type Action =
     | { type: "FETCH_START" }

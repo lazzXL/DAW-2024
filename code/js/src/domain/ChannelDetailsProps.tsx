@@ -1,5 +1,5 @@
 import { Channel } from "./Channel";
-import { Participant } from "../components/MessagePanel";
+import { Participant } from "./Participant";
 
 export type ChannelDetailsModalProps = {
     channel: Channel;
