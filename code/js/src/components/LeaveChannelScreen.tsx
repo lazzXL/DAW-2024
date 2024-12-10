@@ -1,16 +1,7 @@
 import * as React from "react";
-import { Participant } from "./MessagePanel"; 
-type LeaveChannelModalProps = {
-    channelName: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-};
+import { LeaveChannelModalProps } from "../domain/LeaveChannelProps";
 
-export function LeaveChannelModal({
-    channelName,
-    onConfirm,
-    onCancel,
-}: LeaveChannelModalProps) {
+export function LeaveChannelModal({channelName, onConfirm, onCancel}: LeaveChannelModalProps) {
     return (
         <div className="modal-overlay">
             <div className="modal-content">

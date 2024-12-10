@@ -1,11 +1,9 @@
 import * as React from "react";
 import { ProfileInfo } from "./Profile";
 
-
-
 export function SettingsList() {
     const [currentView, setCurrentView] = React.useState(null);
-    
+
     return (
         <>
             <div className="settings-list">

@@ -1,13 +1,9 @@
 import * as React from 'react'
-
-type AuthContextType = {
-    token: string | undefined;
-    setToken: (v: string | undefined) => void
-}
+import { AuthContextType } from './domain/AuthContextType';
 
 export const AuthContext = React.createContext<AuthContextType>({
     token: undefined,
-    setToken: () => { throw Error("Not implemented!") }
+    setToken: () => { }
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

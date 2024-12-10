@@ -2,11 +2,7 @@ import * as React from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../AuthProvider';
 
-/***********************
- * CreateChannel Component
- */
 export function CreateChannel() {
-
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
             name: "",
@@ -95,9 +91,6 @@ export function CreateChannel() {
     );
 }
 
-/***********************
- * REDUCER
- */
 
 function reduce(state: State, action: Action): State {
     switch (state.tag) {

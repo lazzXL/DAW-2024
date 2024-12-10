@@ -15,7 +15,7 @@ import { CreateChannel } from "./components/CreateChannelForm";
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <AuthRequire><Layout /></AuthRequire>, // Dynamically redirect based on auth state
+        element: <AuthRequire><Layout /></AuthRequire>,
         children: [
             { path: "/", element: <MessagingApp /> },
             { path: "/profile", element: <Profile /> },

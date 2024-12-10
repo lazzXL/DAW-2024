@@ -5,7 +5,7 @@ import { AuthContext } from './AuthProvider';
 export function Login() {
     const location = useLocation()
     const navigate = useNavigate();
-    const {token, setToken} = React.useContext(AuthContext)
+    const {setToken} = React.useContext(AuthContext)
     const [state, dispatch] = React.useReducer(reduce, {
         tag: "editing", inputs: {
             username: "",
@@ -117,11 +117,6 @@ type Action = { type: "edit", inputName: string, inputValue: string }
     | { type: "success" }
     | { type: "error", message: string }
 
-function delay(delayInMs: number) {
-    return new Promise(resolve => {
-        setTimeout(() => resolve(undefined), delayInMs);
-    });
-}
 
 async function authenticate(username: string, password: string): Promise<string | undefined> {
     try {

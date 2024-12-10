@@ -2,11 +2,7 @@ import * as React from "react";
 import { Channel } from "../domain/Channel";
 import { AuthContext } from "../AuthProvider";
 import { useNavigate } from "react-router-dom";
-
-type ChannelListProps = {
-    selectedChannel: Channel | null;
-    onSelectChannel: (channel: Channel) => void;
-};
+import { ChannelListProps } from "../domain/ChannelListProps";
 
 export function ChannelList({ selectedChannel, onSelectChannel }: ChannelListProps) {
     const [channels, setChannels] = React.useState<Channel[]>([]);

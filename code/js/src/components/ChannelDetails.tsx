@@ -1,14 +1,6 @@
 import * as React from "react";
-import { Participant } from "./MessagePanel"; 
-import { Channel } from "../domain/Channel";
-import { RegistrationCode } from "./RegistrationCodeGen";
 import { ChannelInvitation } from "./ChannelInvitationGen";
-
-type ChannelDetailsModalProps = {
-    channel: Channel;
-    participants: Participant[];
-    onClose: () => void;
-};
+import { ChannelDetailsModalProps } from "../domain/ChannelDetailsProps";
 
 export function ChannelDetailsModal({
     channel,

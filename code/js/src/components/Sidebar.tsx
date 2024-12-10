@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../AuthProvider";
 
 export function Sidebar() {
+    const {setToken} = React.useContext(AuthContext)
     return (
         <div className="sidebar">
             <div>
@@ -29,6 +31,11 @@ export function Sidebar() {
             </Link>
             </button>
             <div className="spacer"></div>
+            <button>
+                <Link to="/login" onClick = {() => setToken(undefined) } style={{ textDecoration: "none", color: "inherit" }}>
+                    🚪
+                </Link>
+            </button>
             <button>
                 <Link to="/settings" style={{ textDecoration: "none", color: "inherit" }}>
                     ⚙

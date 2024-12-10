@@ -1,14 +1,6 @@
 import * as React from 'react';
 import { AuthContext } from "../AuthProvider";
-
-interface PublicChannel {
-    id : number;
-    name: string;
-    description: string;
-}
-type PublicChannelListProps = {
-    onSelectChannel: (channel: PublicChannel) => void;
-};
+import { PublicChannel, PublicChannelListProps } from '../domain/PublicChannel';
 
 export function PublicChannelList({ onSelectChannel }: PublicChannelListProps) {
     const [publicChannels, setPublicChannels] = React.useState<PublicChannel[]>([]);

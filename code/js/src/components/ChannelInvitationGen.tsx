@@ -1,11 +1,7 @@
-
 import * as React from "react";
 import { AuthContext } from "../AuthProvider";
+import { channelInvitationProps } from "./channelInvitationProps";
 
-
-type channelInvitationProps = {
-    channelId: number;
-};
 
 export function ChannelInvitation(
     {channelId} : channelInvitationProps

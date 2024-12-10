@@ -4,25 +4,13 @@ import { Channel } from "../domain/Channel";
 import { AuthContext } from "../AuthProvider";
 import { ChannelDetailsModal } from "./ChannelDetails";
 import { LeaveChannelModal } from "./LeaveChannelScreen";
+import { MessagePanelState, MessageInput } from "../domain/MessagePanelProps";
 
 export type Participant = {
     id: string;
     userId : number;
     name: string;
     permission: string;
-};
-
-type MessageInput = {
-    content: string;
-    channelId: number;
-};
-
-type MessagePanelState = {
-    messages: Message[];
-    participants: Participant[];
-    loading: boolean;
-    error: string | null;
-    message: string;
 };
 
 type Action =

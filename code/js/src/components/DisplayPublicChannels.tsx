@@ -3,12 +3,8 @@ import { useState, useEffect } from 'react';
 import PublicChannelList from './PublicChannelList';
 import { AuthContext } from '../AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { PublicChannel } from '../domain/PublicChannel';
 
-interface PublicChannel {
-    id: number;
-    name: string;
-    description: string;
-}
 
 export function DisplayPublicChannels() {
     const navigate = useNavigate();

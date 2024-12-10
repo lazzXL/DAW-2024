@@ -4,7 +4,7 @@ import { AuthContext } from '../AuthProvider';
 
 
 export function JoinPrivateChannel() {
-    const { token, setToken } = React.useContext(AuthContext);
+    const { token } = React.useContext(AuthContext);
 
     const [state, dispatch] = React.useReducer(reduce, {
         tag: 'editing',

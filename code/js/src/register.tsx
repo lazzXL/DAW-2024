@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { json, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext } from './AuthProvider';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
-/***********************
- * RequireAuth Component
- */
+
 export function Register() {
     const location = useLocation()
     const navigate = useNavigate();
@@ -125,9 +122,6 @@ export function Register() {
     );
 }
 
-/***********************
- * REDUCER
- */
 
 function reduce(state: State, action: Action): State {
     switch (state.tag) {
@@ -154,10 +148,6 @@ type Action = { type: "edit", inputName: string, inputValue: string }
     | { type: "submit" }
     | { type: "success" }
     | { type: "error", message: string }
-
-/************************
- * Auxiliary Functions emulating authenticate
- */
 
 async function registerFetch( invitation : String, username: string, email : String, password: string): Promise<true | undefined> {
     try {
