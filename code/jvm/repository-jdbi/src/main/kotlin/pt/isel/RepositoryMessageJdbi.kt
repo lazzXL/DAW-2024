@@ -35,7 +35,7 @@ class RepositoryMessageJdbi(
                 SELECT m.* FROM dbo.messages m
                 JOIN dbo.participants p ON m.sender_id = p.id
                 WHERE p.channel_id = :channel_id
-                ORDER BY m.date_sent
+                ORDER BY m.date_sent DESC
                 LIMIT :limit OFFSET :skip
                 """,
             ).bind("channel_id", channel.id.toInt())
