@@ -14,7 +14,7 @@ class RepositoryChannelJdbi(
         handle
             .createQuery(
                 """
-            SELECT c.* FROM dbo.channels c
+            SELECT c.* FROM new.channels c
             WHERE c.id = :id
             """,
             ).bind("id", id.toInt())
@@ -26,7 +26,7 @@ class RepositoryChannelJdbi(
         handle
             .createQuery(
                 """
-                SELECT c.* FROM dbo.channels c
+                SELECT c.* FROM new.channels c
                 """,
             ).map { rs, _ -> mapRowToChannel(rs) }
             .list()
@@ -37,7 +37,7 @@ class RepositoryChannelJdbi(
         handle
             .createUpdate(
                 """
-            UPDATE dbo.channels 
+            UPDATE new.channels 
             SET name = :name, description = :description, admin_id = :admin_id, visibility = :visibility
             WHERE id = :id
             """,
@@ -51,7 +51,7 @@ class RepositoryChannelJdbi(
 
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.channels WHERE id = :id")
+            .createUpdate("DELETE FROM new.channels WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
@@ -66,7 +66,7 @@ class RepositoryChannelJdbi(
             handle
                 .createUpdate(
                     """
-                INSERT INTO dbo.channels (name, description, admin_id, visibility) 
+                INSERT INTO new.channels (name, description, admin_id, visibility) 
                 VALUES (:name, :description, :admin_id, :visibility)
                 """,
                 ).bind("name", name)
@@ -84,7 +84,7 @@ class RepositoryChannelJdbi(
         handle
             .createQuery(
             """
-                    SELECT c.* FROM dbo.channels c
+                    SELECT c.* FROM new.channels c
                     WHERE c.name = :name
                     """,
             ).bind("name", name)
@@ -96,9 +96,10 @@ class RepositoryChannelJdbi(
         handle
             .createQuery(
             """
-                    SELECT c.* FROM dbo.channels c
-                    JOIN dbo.participants p ON c.id = p.channel_id
+                    SELECT c.* FROM new.channels c
+                    JOIN new.participants p ON c.id = p.channel_id
                     WHERE p.user_id = :user_id
+                    AND p.is_active = TRUE
                     AND (:name IS NULL OR c.name LIKE :name)
                     LIMIT :limit OFFSET :skip
                     """,
@@ -113,7 +114,7 @@ class RepositoryChannelJdbi(
         handle
             .createQuery(
                 """
-                SELECT c.* FROM dbo.channels c
+                SELECT c.* FROM new.channels c
                 WHERE c.visibility = :visibility
                 AND (:name IS NULL OR c.name LIKE :name)
                 LIMIT :limit OFFSET :skip
@@ -127,7 +128,7 @@ class RepositoryChannelJdbi(
 
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.channels").execute()
+        handle.createUpdate("DELETE FROM new.channels").execute()
     }
 
     // TODO: OTHER POSSIBLE FUTURE IMPLEMENTATIONS: findAllChannelsByAdmin and findPublicChannel(s)ByName

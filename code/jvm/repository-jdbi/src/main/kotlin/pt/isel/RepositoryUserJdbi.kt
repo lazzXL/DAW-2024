@@ -12,7 +12,7 @@ class RepositoryUserJdbi(
 
     override fun findById(id: UInt): User? =
         handle
-            .createQuery("SELECT * FROM dbo.users WHERE id = :id")
+            .createQuery("SELECT * FROM new.users WHERE id = :id")
             .bind("id", id.toInt())
             .map { rs, _ -> mapRowToUser(rs) }
             .findOne()
@@ -20,7 +20,7 @@ class RepositoryUserJdbi(
 
     override fun findAll(): List<User> =
         handle
-            .createQuery("SELECT * FROM dbo.users")
+            .createQuery("SELECT * FROM new.users")
             .map { rs, _ -> mapRowToUser(rs) }
             .list()
 
@@ -28,7 +28,7 @@ class RepositoryUserJdbi(
         handle
             .createUpdate(
                 """
-            UPDATE dbo.users 
+            UPDATE new.users 
             SET name = :name, email = :email , password = :password
             WHERE id = :id
             """,
@@ -41,14 +41,14 @@ class RepositoryUserJdbi(
 
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.users WHERE id = :id")
+            .createUpdate("DELETE FROM new.users WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.tokens").execute()
-        handle.createUpdate("DELETE FROM dbo.users").execute()
+        handle.createUpdate("DELETE FROM new.tokens").execute()
+        handle.createUpdate("DELETE FROM new.users").execute()
     }
 
     override fun createUser(
@@ -60,7 +60,7 @@ class RepositoryUserJdbi(
             handle
                 .createUpdate(
                     """
-                    INSERT INTO dbo.users (name, email, password) 
+                    INSERT INTO new.users (name, email, password) 
                     VALUES (:name, :email, :password)
                     RETURNING id
                     """,
@@ -78,9 +78,9 @@ class RepositoryUserJdbi(
         handle
             .createUpdate(
                 """
-                DELETE FROM dbo.tokens 
+                DELETE FROM new.tokens 
                 WHERE user_id = :user_id AND token_validation IN (
-                    SELECT token_validation FROM dbo.tokens WHERE user_id = :user_id 
+                    SELECT token_validation FROM new.tokens WHERE user_id = :user_id 
                     ORDER BY last_used_at DESC OFFSET :offset
                 )
                 """,
@@ -91,7 +91,7 @@ class RepositoryUserJdbi(
         handle
             .createUpdate(
                 """
-                INSERT INTO dbo.tokens(user_id, token_validation, created_at, last_used_at) 
+                INSERT INTO new.tokens(user_id, token_validation, created_at, last_used_at) 
                 VALUES (:user_id, :token_validation, :created_at, :last_used_at)
                 """,
             ).bind("user_id", token.userId.toInt())
@@ -107,8 +107,8 @@ class RepositoryUserJdbi(
             .createQuery(
                 """
                 SELECT id, name, email, password, token_validation, created_at, last_used_at
-                FROM dbo.users u 
-                JOIN dbo.tokens t ON u.id = t.user_id
+                FROM new.users u 
+                JOIN new.tokens t ON u.id = t.user_id
                 WHERE token_validation = :validation_information
             """,
             ).bind("validation_information", tokenValidationInfo.validationInfo)
@@ -121,7 +121,7 @@ class RepositoryUserJdbi(
         handle
             .createUpdate(
                 """
-                UPDATE dbo.tokens
+                UPDATE new.tokens
                 SET last_used_at = :last_used_at
                 WHERE token_validation = :validation_information
                 """,
@@ -134,7 +134,7 @@ class RepositoryUserJdbi(
         handle
             .createUpdate(
             """
-                DELETE FROM dbo.tokens
+                DELETE FROM new.tokens
                 WHERE token_validation = :validation_information
                 """,
             ).bind("validation_information", tokenValidationInfo.validationInfo)
@@ -143,7 +143,7 @@ class RepositoryUserJdbi(
 
     override fun findByEmail(email: Email): User? =
         handle
-            .createQuery("SELECT * FROM dbo.users WHERE email = :email")
+            .createQuery("SELECT * FROM new.users WHERE email = :email")
             .bind("email", email.toString())
             .map { rs, _ -> mapRowToUser(rs) }
             .findOne()
@@ -151,7 +151,7 @@ class RepositoryUserJdbi(
 
     override fun findByName(name: String): User? =
         handle
-            .createQuery("SELECT * FROM dbo.users WHERE name = :name")
+            .createQuery("SELECT * FROM new.users WHERE name = :name")
             .bind("name", name)
             .map { rs, _ -> mapRowToUser(rs) }
             .findOne()

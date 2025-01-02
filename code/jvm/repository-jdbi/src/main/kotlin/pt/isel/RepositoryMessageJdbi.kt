@@ -15,7 +15,7 @@ class RepositoryMessageJdbi(
             handle
                 .createUpdate(
                     """
-                INSERT INTO dbo.messages (content, date_sent, sender_id) 
+                INSERT INTO new.messages (content, date_sent, sender_id) 
                 VALUES (:content, :date_sent, :sender_id)
                 """,
                 ).bind("content", content)
@@ -32,8 +32,8 @@ class RepositoryMessageJdbi(
         handle
             .createQuery(
                 """
-                SELECT m.* FROM dbo.messages m
-                JOIN dbo.participants p ON m.sender_id = p.id
+                SELECT m.* FROM new.messages m
+                JOIN new.participants p ON m.sender_id = p.id
                 WHERE p.channel_id = :channel_id
                 ORDER BY m.date_sent DESC
                 LIMIT :limit OFFSET :skip
@@ -48,7 +48,7 @@ class RepositoryMessageJdbi(
         handle
             .createQuery(
                 """
-            SELECT m.* FROM dbo.messages m
+            SELECT m.* FROM new.messages m
             WHERE m.id = :id
             """,
             ).bind("id", id.toInt())
@@ -60,7 +60,7 @@ class RepositoryMessageJdbi(
         handle
             .createQuery(
                 """
-                SELECT m.* FROM dbo.messages m
+                SELECT m.* FROM new.messages m
                 """,
             ).map { rs, _ -> mapRowToMessage(rs) }
             .list()
@@ -70,7 +70,7 @@ class RepositoryMessageJdbi(
         handle
             .createUpdate(
                 """
-            UPDATE dbo.messages 
+            UPDATE new.messages 
             SET content = :content, date_sent = :date_sent, sender_id = :sender_id
             WHERE id = :id
             """,
@@ -83,13 +83,13 @@ class RepositoryMessageJdbi(
 
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.messages WHERE id = :id")
+            .createUpdate("DELETE FROM new.messages WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.messages").execute()
+        handle.createUpdate("DELETE FROM new.messages").execute()
     }
 
     private fun mapRowToMessage(rs: ResultSet): Message {

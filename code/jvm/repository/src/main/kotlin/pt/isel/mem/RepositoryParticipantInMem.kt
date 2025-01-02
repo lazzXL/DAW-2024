@@ -39,4 +39,8 @@ class RepositoryParticipantInMem : RepositoryParticipant {
     override fun getParticipantsFromChannel(channelId: UInt): List<Participant> {
         TODO("Not yet implemented")
     }
+
+    override fun setInactiveParticipant(id: UInt) {
+        TODO("Not yet implemented")
+    }
 }

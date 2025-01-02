@@ -183,7 +183,7 @@ class RepositoryUserJdbiTests : RepositoryJdbiTests() {
             }
 
             // Ensure only maxTokens remain
-            val tokensInDb = handle.createQuery("SELECT COUNT(*) FROM dbo.tokens WHERE user_id = :user_id")
+            val tokensInDb = handle.createQuery("SELECT COUNT(*) FROM new.tokens WHERE user_id = :user_id")
                 .bind("user_id", alice.id.toInt())
                 .mapTo(Int::class.java)
                 .one()

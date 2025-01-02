@@ -53,7 +53,11 @@ class ParticipantServices (
     ): Either<ParticipantError, Unit> = trxManager.run {
         val participant = repoParticipant.isParticipant(channelId,userId)
             ?: return@run failure(ParticipantError.ParticipantNotFound)
-        success(repoParticipant.deleteById(participant.id))
+        if(participant.permission == Permission.READ_ONLY){
+            success(repoParticipant.deleteById(participant.id))
+        } else{
+            success(repoParticipant.setInactiveParticipant(participant.id))
+        }
     }
 
     fun getParticipantsFromChannel(
