@@ -35,6 +35,17 @@ dependencies {
 
 }
 
+tasks.register<Exec>("runDocker") {
+    group = "Docker"
+    description = "Runs Docker Compose down and up -d"
+
+    commandLine("docker-compose", "down")
+    doLast {
+        exec {
+            commandLine("docker-compose", "up", "-d")
+        }
+    }
+}
 
 tasks.test {
     useJUnitPlatform()
