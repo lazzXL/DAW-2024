@@ -12,22 +12,38 @@ class RepositoryParticipantJdbi(
         channel: Channel,
         permission: Permission
     ): Participant {
-        val id =
+        val id = try {
             handle
                 .createUpdate(
                     """
-                INSERT INTO dbo.participants (user_id, channel_id, permission )
-                VALUES (:user_id, :channel_id, :permission)
+                INSERT INTO new.participants (user_id, channel_id, permission, is_active)
+                VALUES (:user_id, :channel_id, :permission, TRUE)
                 """,
-                ).bind("user_id", user.id.toInt())
+                )
+                .bind("user_id", user.id.toInt())
                 .bind("channel_id", channel.id.toInt())
                 .bind("permission", permission.name)
                 .executeAndReturnGeneratedKeys()
                 .mapTo(Int::class.java)
                 .one()
+        } catch (e: Exception) {
+            // If insertion fails due to trigger behavior, fetch the existing ID
+            handle
+                .createQuery(
+                    """
+                SELECT id FROM new.participants 
+                WHERE user_id = :user_id AND channel_id = :channel_id
+                """
+                )
+                .bind("user_id", user.id.toInt())
+                .bind("channel_id", channel.id.toInt())
+                .mapTo(Int::class.java)
+                .one()
+        }
 
-        return Participant(id.toUInt(), user, channel, permission )
+        return Participant(id.toUInt(), user, channel, permission)
     }
+
 
     override fun getParticipantsFromChannel(channelId: UInt): List<Participant> =
         handle
@@ -35,10 +51,10 @@ class RepositoryParticipantJdbi(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
                 u.name as user_name, u.email, u.password
-                FROM dbo.participants p
-                JOIN dbo.users u ON p.user_id = u.id
-                JOIN dbo.channels c ON p.channel_id = c.id
-                WHERE p.channel_id = :channelId
+                FROM new.participants p
+                JOIN new.users u ON p.user_id = u.id
+                JOIN new.channels c ON p.channel_id = c.id
+                WHERE p.channel_id = :channelId AND p.is_active = TRUE
                 """,
             ).bind("channelId", channelId.toInt())
             .map { rs, _ -> mapRowToParticipant(rs) }
@@ -51,11 +67,12 @@ class RepositoryParticipantJdbi(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
                 u.name as user_name, u.email, u.password
-                FROM dbo.participants p
-                JOIN dbo.users u ON p.user_id = u.id
-                JOIN dbo.channels c ON p.channel_id = c.id
+                FROM new.participants p
+                JOIN new.users u ON p.user_id = u.id
+                JOIN new.channels c ON p.channel_id = c.id
                 WHERE p.channel_id = :channelId
                 AND p.user_id = :userId
+                AND p.is_active = TRUE
                 """,
             ).bind("channelId", channelId.toInt())
             .bind("userId", userId.toInt())
@@ -70,9 +87,9 @@ class RepositoryParticipantJdbi(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
                 u.name as user_name, u.email, u.password
-                FROM dbo.participants p
-                JOIN dbo.channels c ON p.channel_id = c.id
-                JOIN dbo.users u ON p.user_id = u.id
+                FROM new.participants p
+                JOIN new.channels c ON p.channel_id = c.id
+                JOIN new.users u ON p.user_id = u.id
                 WHERE p.id = :id
                 """,
             )
@@ -88,9 +105,9 @@ class RepositoryParticipantJdbi(
                 """
                 SELECT p.*, c.name as channel_name, c.admin_id, c.description, c.visibility,
                 u.name as user_name, u.email, u.password
-                FROM dbo.participants p
-                JOIN dbo.channels c ON p.channel_id = c.id
-                JOIN dbo.users u ON p.user_id = u.id
+                FROM new.participants p
+                JOIN new.channels c ON p.channel_id = c.id
+                JOIN new.users u ON p.user_id = u.id
                 """)
             .map { rs, _ -> mapRowToParticipant(rs) }
             .list()
@@ -100,7 +117,7 @@ class RepositoryParticipantJdbi(
         handle
             .createUpdate(
                 """
-                UPDATE dbo.participants
+                UPDATE new.participants
                 SET user_id = :user_id, channel_id = :channel_id, permission = :permission
                 WHERE id = :id
                 """,
@@ -111,15 +128,27 @@ class RepositoryParticipantJdbi(
             .execute()
     }
 
+    override fun setInactiveParticipant(id: UInt) {
+        handle
+            .createUpdate(
+                """
+                UPDATE new.participants
+                SET is_active = FALSE
+                WHERE id = :id
+                """,
+            ).bind("id", id.toInt())
+            .execute()
+    }
+
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.participants WHERE id = :id")
+            .createUpdate("DELETE FROM new.participants WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.participants").execute()
+        handle.createUpdate("DELETE FROM new.participants").execute()
     }
 
     private fun mapRowToParticipant(rs: ResultSet): Participant {

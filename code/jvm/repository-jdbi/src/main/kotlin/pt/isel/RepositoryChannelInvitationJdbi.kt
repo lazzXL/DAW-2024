@@ -18,8 +18,8 @@ class RepositoryChannelInvitationJdbi(
                 c.description,
                 c.admin_id,
                 c.visibility
-                FROM dbo.channel_invitations i
-                JOIN dbo.channels c ON i.channel_id = c.id 
+                FROM new.channel_invitations i
+                JOIN new.channels c ON i.channel_id = c.id 
                 WHERE i.code = :code
             """,
             ).bind("code", code.toString())
@@ -32,7 +32,7 @@ class RepositoryChannelInvitationJdbi(
             handle
                 .createUpdate(
                     """
-                INSERT INTO dbo.channel_invitations (code, channel_id, permission) 
+                INSERT INTO new.channel_invitations (code, channel_id, permission) 
                 VALUES (:code, :channel_id, :permission)
                 """,
                 ).bind("code", code.toString())
@@ -47,13 +47,13 @@ class RepositoryChannelInvitationJdbi(
 
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.channel_invitations WHERE id = :id")
+            .createUpdate("DELETE FROM new.channel_invitations WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.channel_invitations").execute()
+        handle.createUpdate("DELETE FROM new.channel_invitations").execute()
     }
 
     override fun findById(id: UInt): ChannelInvitation? =
@@ -66,8 +66,8 @@ class RepositoryChannelInvitationJdbi(
                 c.description,
                 c.admin_id,
                 c.visibility
-                FROM dbo.channel_invitations i
-                JOIN dbo.channels c ON i.channel_id = c.id 
+                FROM new.channel_invitations i
+                JOIN new.channels c ON i.channel_id = c.id 
                 WHERE i.id = :id"""
             )
             .bind("id", id.toInt())
@@ -80,8 +80,8 @@ class RepositoryChannelInvitationJdbi(
         handle
             .createQuery("""
                 SELECT i.*, c.id as c_id, c.name, c.description, c.admin_id, c.visibility
-                FROM dbo.channel_invitations i
-                JOIN dbo.channels c ON i.channel_id = c.id 
+                FROM new.channel_invitations i
+                JOIN new.channels c ON i.channel_id = c.id 
                 """
             )
             .map { rs, _ -> mapRowToInvitation(rs) }
@@ -91,7 +91,7 @@ class RepositoryChannelInvitationJdbi(
         handle
             .createUpdate(
                 """
-                UPDATE dbo.channel_invitations
+                UPDATE new.channel_invitations
                 SET code = :code, channel_id = :channel_id, permission = :permission
                 WHERE id = :id
                 """,

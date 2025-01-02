@@ -12,7 +12,7 @@ class RepositoryRegisterInvitationJdbi(
         handle
             .createQuery(
                 """
-            SELECT i.* FROM dbo.register_invitations i
+            SELECT i.* FROM new.register_invitations i
             WHERE i.code = :code
             """,
             ).bind("code", code.toString())
@@ -26,7 +26,7 @@ class RepositoryRegisterInvitationJdbi(
             handle
                 .createUpdate(
                     """
-                INSERT INTO dbo.register_invitations (code) 
+                INSERT INTO new.register_invitations (code) 
                 VALUES (:code)
                 """,
                 ).bind("code", code.toString())
@@ -39,7 +39,7 @@ class RepositoryRegisterInvitationJdbi(
     override fun findById(id: UInt): RegisterInvitation? =
         handle
             .createQuery("""
-                SELECT * FROM dbo.register_invitations
+                SELECT * FROM new.register_invitations
                 WHERE id = :id
                 """)
             .bind("id", id.toInt())
@@ -49,7 +49,7 @@ class RepositoryRegisterInvitationJdbi(
 
     override fun findAll(): List<RegisterInvitation> =
         handle
-            .createQuery("SELECT * FROM dbo.register_invitations")
+            .createQuery("SELECT * FROM new.register_invitations")
             .map { rs, _ -> mapRowToInvitation(rs) }
             .list()
 
@@ -57,7 +57,7 @@ class RepositoryRegisterInvitationJdbi(
         handle
             .createUpdate(
                 """
-                UPDATE dbo.register_invitations
+                UPDATE new.register_invitations
                 SET code = :code
                 WHERE id = :id
                 """,
@@ -69,20 +69,20 @@ class RepositoryRegisterInvitationJdbi(
 
     override fun deleteById(id: UInt) {
         handle
-            .createUpdate("DELETE FROM dbo.register_invitations WHERE id = :id")
+            .createUpdate("DELETE FROM new.register_invitations WHERE id = :id")
             .bind("id", id.toInt())
             .execute()
     }
 
     override fun deleteByCode(code: UUID) {
         handle
-            .createUpdate("DELETE FROM dbo.register_invitations WHERE code = :code")
+            .createUpdate("DELETE FROM new.register_invitations WHERE code = :code")
             .bind("code", code.toString())
             .execute()
     }
 
     override fun clear() {
-        handle.createUpdate("DELETE FROM dbo.register_invitations").execute()
+        handle.createUpdate("DELETE FROM new.register_invitations").execute()
     }
 
     private fun mapRowToInvitation(rs: ResultSet): RegisterInvitation =
