@@ -36,7 +36,7 @@ class ParticipantController(
      * @param authenticatedUser the authenticated user.
      * @return the response entity.
      */
-    @PostMapping("/join") // Verified
+    @PostMapping("/join")
     fun joinPublicChannel(@RequestBody joinInput : JoinPublicChannelInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Any> {
         return when (val result: Either<ParticipantError, Participant> = participantServices.joinPublicChannel(authenticatedUser.user, joinInput.channelId) ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)

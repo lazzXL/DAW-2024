@@ -22,8 +22,7 @@ class MessageController(
 
     @PostMapping("/send")
     fun sendMessage(@RequestBody messageInput: SendMessageInput, authenticatedUser: AuthenticatedUser): ResponseEntity<Message> {
-        println("MESSAGE SENT REQUEST RECEIVED\n" + messageInput.toString() + "\n")
-        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, /*messageInput.date,*/ messageInput.channelId, authenticatedUser.user.id)) {
+        return when (val result: Either<MessageError, Message> = messageService.sendMessage(messageInput.content, messageInput.channelId, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
             is Failure -> handleMessageFailure(result.value)
         }

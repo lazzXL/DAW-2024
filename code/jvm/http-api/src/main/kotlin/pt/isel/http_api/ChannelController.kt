@@ -18,7 +18,6 @@ class ChannelController(
     private val channelServices: ChannelServices
 ) {
 
-
     /**
      * Gets a channel by its id.
      * @param channelId the id of the channel.
@@ -40,7 +39,7 @@ class ChannelController(
      * @param authenticatedUser the authenticated user.
      * @return the response entity.
      */
-    @GetMapping("/joined") // Verified
+    @GetMapping("/joined")
     fun getJoinedChannels(@RequestParam(required = false) name: String?, @RequestParam(required = false) limit : Int?, @RequestParam(required = false) skip : Int?, authenticatedUser: AuthenticatedUser): ResponseEntity<List<Channel>> {
         val channelName = name.takeIf { !it.isNullOrBlank() }
         return when (val result: Either<ChannelError, List<Channel>> = channelServices.getJoinedChannels(authenticatedUser.user.id,channelName, limit, skip)) {
@@ -56,7 +55,7 @@ class ChannelController(
      * @param authenticatedUser the authenticated user.
      * @return the response entity.
      */
-    @GetMapping("/public") // Verified
+    @GetMapping("/public")
     fun getPublicChannels(@RequestParam(required = false) name: String?, @RequestParam(required = false) limit : Int?, @RequestParam(required = false) skip : Int?, authenticatedUser: AuthenticatedUser): ResponseEntity<List<Channel>> {
         val channelName = name.takeIf { !it.isNullOrBlank() }
         return when (val result: Either<ChannelError, List<Channel>> = channelServices.getPublicChannels(channelName, limit, skip)) {

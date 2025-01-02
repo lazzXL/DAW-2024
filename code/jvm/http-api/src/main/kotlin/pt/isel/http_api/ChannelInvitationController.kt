@@ -15,7 +15,7 @@ import pt.isel.http_api.model.handleParticipantFailure
 class ChannelInvitationController(
     private val invitationService: ChannelInvitationServices
 ) {
-    @PostMapping("/create") // Verified
+    @PostMapping("/create")
     fun createInvitation(@RequestBody invitationInput: CreateInvitationInput, authenticatedUser: AuthenticatedUser): ResponseEntity<ChannelInvitation> {
         return when (val result: Either<ChannelInvitationError, ChannelInvitation> = invitationService.createInvitation(invitationInput.channelID, invitationInput.permission, authenticatedUser.user.id)) {
              is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
