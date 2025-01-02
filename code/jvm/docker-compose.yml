@@ -1,13 +1,12 @@
-version: "3.3"
+version: '3.8'
 services:
-  db-tests:
-    container_name: db-tests
-    build:
-      context: repository-jdbi
-      dockerfile: ./tests/Dockerfile-db-test
+  postgres:
+    image: postgres
+    container_name: im-postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1212
     ports:
-      - 5431:5432
+      - "5431:5432"
+    volumes:
+      - ./repository-jdbi/src/sql:/docker-entrypoint-initdb.d
