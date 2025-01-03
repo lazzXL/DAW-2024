@@ -4,10 +4,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.*
 import pt.isel.mem.TransactionManagerInMem
-import pt.isel.temp.BCryptPasswordEncoder
-import pt.isel.temp.Sha256TokenEncoder
-import pt.isel.temp.UsersDomain
-import pt.isel.temp.UsersDomainConfig
 import java.util.*
 import java.util.stream.Stream
 import kotlin.test.assertIs

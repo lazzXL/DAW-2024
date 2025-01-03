@@ -1,10 +1,7 @@
-# DAW project
+# Passos para arranque do sistema
 
-Please edit this document with an introduction to your project, including links to all the existing documentation.
+## Realizar clone do repositório.
 
-In addition, please add a [`.mailmap`](https://git-scm.com/docs/gitmailmap) file, mapping the emails used in the commits to your ISEL email and student number
-Example:
+# Inicialização do backend:
 
-```
-12345 <a12345@alunos.isel.pt> <mygithubuser@whatever.com>
-```
+## 1. Abrir o projeto no intelliJ IDEA.

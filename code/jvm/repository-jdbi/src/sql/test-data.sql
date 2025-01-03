@@ -1,8 +1,7 @@
 INSERT INTO new.users (name, email, password)
 VALUES
-('Alice', 'alice@example.com', 'password123'),
-('Bob', 'bob@example.com', 'securepassword'),
-('Charlie', 'charlie@example.com', 'mypassword');
+('Marco', 'marco@email.com', '$2a$10$8qX/zFYbI57ZZQDDHhUImOwp/JOh/gJC3U/rBZDzDY0JWfy3vBxi2'),
+('Bobby', 'bobby@email.com', '$2a$10$A2RceN7IE3yBJEEf1aP2w.UCZhyWGDdRo6ULfIxCh5XgKoO1jQ/wm');
 
 INSERT INTO new.channels (name, description, admin_id, visibility)
 VALUES
