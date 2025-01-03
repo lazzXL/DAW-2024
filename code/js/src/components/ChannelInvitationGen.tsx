@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AuthContext } from "../AuthProvider";
-import { channelInvitationProps } from "./channelInvitationProps";
+import { channelInvitationProps } from "../domain/ChannelInvitationProps";
 
 
 export function ChannelInvitation(

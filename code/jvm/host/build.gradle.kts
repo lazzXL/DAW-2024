@@ -42,7 +42,7 @@ tasks.register<Exec>("runDocker") {
     commandLine("docker-compose", "down")
     doLast {
         exec {
-            commandLine("docker-compose", "up", "-d")
+            commandLine("docker-compose", "up", "-d", "--remove-orphans")
         }
     }
 }
